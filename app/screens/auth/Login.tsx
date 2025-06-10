@@ -16,16 +16,17 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type AuthenticationRequest from "../../model/Authentication";
 import authApi from "../../services/authApi";
 import { loginSuccess } from "../../redux/authSlice";
+import { RootStackParamList } from "@/routes/Routers";
 // import { RootStackParamList } from "@/navigation/type";
 
-// type NavigationProp = NativeStackNavigationProp<RootStackParamList, "tab" | "dashboard">;
+type NavigationProp = NativeStackNavigationProp<RootStackParamList, "tab" | "dashboard">;
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // const navigation = useNavigation<NavigationProp>();
+  const navigation = useNavigation<NavigationProp>();
   const dispatch = useDispatch();
 
   const login = useMutation({
@@ -34,9 +35,10 @@ const LoginScreen = () => {
       dispatch(loginSuccess({ token: data.token, userResponse: data.userResponse }));
       const roles = data.userResponse.roles;
       if (roles.includes("ADMIN")) {
+        navigation.replace("tab", data.userResponse);
         // navigation.replace("dashboard", { authUser: data.userResponse });
       } else {
-        // navigation.replace("tab", { user: data.userResponse });
+        
       }
     },
     onError: (error: any) => {

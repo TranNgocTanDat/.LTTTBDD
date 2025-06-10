@@ -2,6 +2,10 @@ import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator, NativeStackScreenProps } from "@react-navigation/native-stack";
 import LoginScreen from "@/screens/auth/Login";
+import Tabs from "./tabs/Tabs";
+import { UserResponse } from "@/model/User";
+import Splash from "@/screens/Splash";
+import MyOrderDetailScreen, { Order } from "@/screens/user/MyOrderDetailScreen";
 
 // import SignupScreen from "../screens/auth/SignupScreen";
 // import Splash from "../screens/auth/Splash";
@@ -40,7 +44,7 @@ export type RootStackParamList = {
   addproduct: undefined;
   viewproduct: undefined;
   editproduct: undefined;
-  tab: undefined;
+  tab: UserResponse;
   cart: undefined;
   checkout: undefined;
   orderconfirm: undefined;
@@ -48,12 +52,16 @@ export type RootStackParamList = {
   vieworder: undefined;
   vieworderdetails: undefined;
   myorder: undefined;
-  myorderdetail: undefined;
+  myorderdetail: {
+    orderDetail: Order;
+    Token?: string;
+  };
   viewcategories: undefined;
   addcategories: undefined;
   editcategories: undefined;
   viewusers: undefined;
   categories: undefined;
+  
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -61,8 +69,8 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 const Routes: React.FC = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="login" screenOptions={{ headerShown: false }}>
-        {/* <Stack.Screen name="splash" component={Splash} /> */}
+      <Stack.Navigator initialRouteName="splash" screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="splash" component={Splash} />
         <Stack.Screen name="login" component={LoginScreen} />
         {/* <Stack.Screen name="signup" component={SignupScreen} /> */}
         {/* <Stack.Screen name="forgetpassword" component={ForgetPasswordScreen} /> */}
@@ -73,7 +81,7 @@ const Routes: React.FC = () => {
         {/* <Stack.Screen name="addproduct" component={AddProductScreen} /> */}
         {/* <Stack.Screen name="viewproduct" component={ViewProductScreen} /> */}
         {/* <Stack.Screen name="editproduct" component={EditProductScreen} /> */}
-        {/* <Stack.Screen name="tab" component={Tabs} /> */}
+        <Stack.Screen name="tab" component={Tabs} />
         {/* <Stack.Screen name="cart" component={CartScreen} /> */}
         {/* <Stack.Screen name="checkout" component={CheckoutScreen} /> */}
         {/* <Stack.Screen name="orderconfirm" component={OrderConfirmScreen} /> */}
@@ -81,7 +89,7 @@ const Routes: React.FC = () => {
         {/* <Stack.Screen name="vieworder" component={ViewOrdersScreen} /> */}
         {/* <Stack.Screen name="vieworderdetails" component={ViewOrderDetailScreen} /> */}
         {/* <Stack.Screen name="myorder" component={MyOrderScreen} /> */}
-        {/* <Stack.Screen name="myorderdetail" component={MyOrderDetailScreen} /> */}
+        <Stack.Screen name="myorderdetail" component={MyOrderDetailScreen} />
         {/* <Stack.Screen name="viewcategories" component={ViewCategoryScreen} /> */}
         {/* <Stack.Screen name="addcategories" component={AddCategoryScreen} /> */}
         {/* <Stack.Screen name="editcategories" component={EditCategoryScreen} /> */}
