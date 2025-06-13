@@ -19,7 +19,6 @@ export  interface UserCreationRequest {
 
 // UserResponse.ts
 export  interface UserResponse {
-  name: any;
   id: string;
   username: string;
   password: string;
