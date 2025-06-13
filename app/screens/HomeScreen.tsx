@@ -183,15 +183,16 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
           </View>
           <TouchableOpacity
               style={styles.cartIconContainer}
-              // onPress={() => navigation.navigate("cart")}
+              onPress={() => navigation.navigate("cart")}
           >
             {cartItems.length > 0 && (
                 <View style={styles.cartItemCountContainer}>
                   <Text style={styles.cartItemCountText}>{cartItems.length}</Text>
                 </View>
             )}
-            <Image source={cartIcon} />
+            <Image source={cartIcon} resizeMode="contain" />
           </TouchableOpacity>
+
         </View>
         <View style={styles.bodyContainer}>
           <View style={styles.searchContainer}>
@@ -235,6 +236,7 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
             <View style={styles.buttonContainer}>
               <TouchableOpacity style={styles.scanButton}>
                 <Text style={styles.scanButtonText}>Scan</Text>
+
                 <Image source={scanIcon} style={{ width: 20, height: 20 }} />
               </TouchableOpacity>
             </View>
