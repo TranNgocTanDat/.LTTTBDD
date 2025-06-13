@@ -207,7 +207,8 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
           <Image source={easybuylogo} style={styles.logo} />
           <Text style={styles.toBarText}>EasyBuy</Text>
         </View>
-        <TouchableOpacity>
+        <TouchableOpacity
+            onPress={() => navigation.getParent()?.navigate("cart")}>
           <Image source={cartIcon} />
         </TouchableOpacity>
       </View>
@@ -245,16 +246,18 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
           </View>
 
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.cartIconContainer}>
+            <TouchableOpacity
+                style={styles.cartIconContainer}
+                onPress={() => navigation.getParent()?.navigate("cart")}
+            >
               {cartItems.length > 0 && (
-                <View style={styles.cartItemCountContainer}>
-                  <Text style={styles.cartItemCountText}>
-                    {cartItems.length}
-                  </Text>
-                </View>
+                  <View style={styles.cartItemCountContainer}>
+                    <Text style={styles.cartItemCountText}>{cartItems.length}</Text>
+                  </View>
               )}
               <Image source={cartIcon} />
             </TouchableOpacity>
+
           </View>
         </View>
       <View style={styles.bodyContainer}>
