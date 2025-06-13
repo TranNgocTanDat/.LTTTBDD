@@ -6,6 +6,7 @@ import Tabs from "./tabs/Tabs";
 import { UserResponse } from "@/model/User";
 import Splash from "@/screens/Splash";
 import MyOrderDetailScreen, { Order } from "@/screens/user/MyOrderDetailScreen";
+import CartScreen from "@/screens/cart/CartScreen";
 
 // import SignupScreen from "../screens/auth/SignupScreen";
 // import Splash from "../screens/auth/Splash";
@@ -82,7 +83,7 @@ const Routes: React.FC = () => {
         {/* <Stack.Screen name="viewproduct" component={ViewProductScreen} /> */}
         {/* <Stack.Screen name="editproduct" component={EditProductScreen} /> */}
         <Stack.Screen name="tab" component={Tabs} />
-        {/* <Stack.Screen name="cart" component={CartScreen} /> */}
+         <Stack.Screen name="cart" component={CartScreen} />
         {/* <Stack.Screen name="checkout" component={CheckoutScreen} /> */}
         {/* <Stack.Screen name="orderconfirm" component={OrderConfirmScreen} /> */}
         {/* <Stack.Screen name="productdetail" component={ProductDetailScreen} /> */}
