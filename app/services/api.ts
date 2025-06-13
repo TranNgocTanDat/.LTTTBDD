@@ -1,7 +1,7 @@
 import store from "@/redux/store";
 import axios, { AxiosResponse, AxiosRequestConfig } from "axios";
 
-const DOMAIN = "http://192.168.1.6:8080/api";
+const DOMAIN = "http://192.168.102.140:8080/api";
 
 const api = axios.create({
   baseURL: DOMAIN,

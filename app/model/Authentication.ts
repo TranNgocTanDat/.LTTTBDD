@@ -1,6 +1,6 @@
 import type { UserResponse } from "./User";
 
-export default interface AuthenticationReuquest {
+export interface AuthenticationRequest {
   email: string;
   password: string;
 }
@@ -8,10 +8,10 @@ export default interface AuthenticationReuquest {
 export interface AuthenticationResponse {
   authenticated: boolean;
   token: string;
-  userResponse: UserResponse
+  userResponse: UserResponse;
 }
 
 export interface VerifyUserRequest {
   email: string;
-  verificationCode: string;
+  code: string;
 }

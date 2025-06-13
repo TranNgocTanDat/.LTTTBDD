@@ -13,11 +13,10 @@ import { useMutation } from "@tanstack/react-query";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import type AuthenticationRequest from "../../model/Authentication";
+import type { AuthenticationRequest } from "@/model/Authentication";
 import authApi from "../../services/authApi";
-import { loginSuccess } from "../../redux/authSlice";
+import { loginSuccess } from "@/redux/authSlice";
 import { RootStackParamList } from "@/routes/Routers";
-// import { RootStackParamList } from "@/navigation/type";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, "tab" | "dashboard">;
 
@@ -38,11 +37,11 @@ const LoginScreen = () => {
         navigation.replace("tab", data.userResponse);
         // navigation.replace("dashboard", { authUser: data.userResponse });
       } else {
-        
+        navigation.replace("tab", data.userResponse);
       }
     },
     onError: (error: any) => {
-      Alert.alert("Login failed", error?.response?.data?.message || "Something went wrong");
+      Alert.alert("Đăng nhập thất bại", error?.response?.data?.message || "Có lỗi xảy ra");
       setIsSubmitting(false);
     },
   });
@@ -54,80 +53,73 @@ const LoginScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Welcome Back</Text>
-      <Text style={styles.subtitle}>Enter your credentials to sign in</Text>
+      <View style={styles.container}>
+        <Text style={styles.title}>Chào mừng bạn trở lại</Text>
+        <Text style={styles.subtitle}>Vui lòng nhập thông tin để đăng nhập</Text>
 
-      <View style={styles.inputGroup}>
-        <Text style={styles.label}>Email</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="name@example.com"
-          keyboardType="email-address"
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-        />
-      </View>
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Email</Text>
+          <TextInput
+              style={styles.input}
+              placeholder="example@email.com"
+              keyboardType="email-address"
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
+          />
+        </View>
 
-      <View style={styles.inputGroup}>
-        <View style={styles.passwordLabelRow}>
-          <Text style={styles.label}>Password</Text>
-          <TouchableOpacity 
-          // onPress={() => navigation.navigate("forgetpassword")}
-          >
-            <Text style={styles.link}>Forgot password?</Text>
+        <View style={styles.inputGroup}>
+          <View style={styles.passwordLabelRow}>
+            <Text style={styles.label}>Mật khẩu</Text>
+            <TouchableOpacity onPress={() => navigation.navigate("forgetpassword")}>
+              <Text style={styles.link}>Quên mật khẩu?</Text>
+            </TouchableOpacity>
+          </View>
+          <TextInput
+              style={styles.input}
+              placeholder="Nhập mật khẩu"
+              secureTextEntry
+              value={password}
+              onChangeText={setPassword}
+          />
+        </View>
+
+        <TouchableOpacity
+            style={styles.button}
+            onPress={handleLogin}
+            disabled={isSubmitting}
+        >
+          {isSubmitting ? (
+              <ActivityIndicator color="#fff" />
+          ) : (
+              <Text style={styles.buttonText}>Đăng nhập</Text>
+          )}
+        </TouchableOpacity>
+
+        <TouchableOpacity
+            style={styles.googleButton}
+            onPress={() => {
+              // Cần tích hợp Google OAuth thực tế nếu dùng
+              const googleUrl = "http://localhost:8080/api/oauth2/authorization/google";
+            }}
+        >
+          <Image
+              source={{
+                uri: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png",
+              }}
+              style={styles.googleIcon}
+          />
+          <Text style={styles.googleText}>Đăng nhập với Google</Text>
+        </TouchableOpacity>
+
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>Chưa có tài khoản?</Text>
+          <TouchableOpacity onPress={() => navigation.navigate("signup")}>
+            <Text style={[styles.link, { marginLeft: 5 }]}>Đăng ký</Text>
           </TouchableOpacity>
         </View>
-        <TextInput
-          style={styles.input}
-          placeholder="Your password"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
       </View>
-
-      <TouchableOpacity
-        style={styles.button}
-        onPress={handleLogin}
-        disabled={isSubmitting}
-      >
-        {isSubmitting ? (
-          <ActivityIndicator color="#fff" />
-        ) : (
-          <Text style={styles.buttonText}>Sign In</Text>
-        )}
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.googleButton}
-        onPress={() => {
-          // Redirect to Google OAuth URL
-          // Note: In real apps, use `expo-auth-session` or `react-native-app-auth`
-          // or a WebView fallback
-          const googleUrl = "http://localhost:8080/api/oauth2/authorization/google";
-          // Linking can be used for browser redirect
-        }}
-      >
-        <Image
-          source={{
-            uri: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png",
-          }}
-          style={styles.googleIcon}
-        />
-        <Text style={styles.googleText}>Continue with Google</Text>
-      </TouchableOpacity>
-
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>Don’t have an account?</Text>
-        <TouchableOpacity 
-        // onPress={() => navigation.navigate("signup")}
-        >
-          <Text style={[styles.link, { marginLeft: 5 }]}>Sign up</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
   );
 };
 
