@@ -171,168 +171,166 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
   }
 
   return (
-      <View style={styles.container}>
-        <StatusBar />
-        <View style={styles.topBarContainer}>
-          <TouchableOpacity disabled>
-            <Ionicons name="menu" size={30} color={colors.muted} />
-          </TouchableOpacity>
-          <View style={styles.topbarlogoContainer}>
-            <Image source={easybuylogo} style={styles.logo} />
-            <Text style={styles.toBarText}>EasyBuy</Text>
-          </View>
-          <TouchableOpacity
-              style={styles.cartIconContainer}
-              onPress={() => navigation.navigate("cart")}
-          >
-            {cartItems.length > 0 && (
-                <View style={styles.cartItemCountContainer}>
-                  <Text style={styles.cartItemCountText}>{cartItems.length}</Text>
-                </View>
-            )}
-            <Image source={cartIcon} resizeMode="contain" />
-          </TouchableOpacity>
-
+    <View style={styles.container}>
+      <StatusBar />
+      <View style={styles.topBarContainer}>
+        <TouchableOpacity disabled>
+          <Ionicons name="menu" size={30} color={colors.muted} />
+        </TouchableOpacity>
+        <View style={styles.topbarlogoContainer}>
+          <Image source={easybuylogo} style={styles.logo} />
+          <Text style={styles.toBarText}>EasyBuy</Text>
         </View>
-        <View style={styles.bodyContainer}>
-          <View style={styles.searchContainer}>
-            <View style={styles.inputContainer}>
-              <Dropdown
-                  style={{
-                    height: 50,
-                    borderColor: colors.muted,
-                    borderWidth: 1,
-                    borderRadius: 8,
-                    paddingHorizontal: 10,
-                    backgroundColor: colors.white,
-                  }}
-                  placeholderStyle={{ color: colors.muted }}
-                  selectedTextStyle={{ color: colors.primary }}
-                  inputSearchStyle={{
-                    height: 40,
-                    borderRadius: 8,
-                    backgroundColor: colors.light,
-                    paddingHorizontal: 10,
-                  }}
-                  itemTextStyle={{ color: colors.muted }}
-                  containerStyle={{
-                    backgroundColor: colors.white,
-                    borderRadius: 8,
-                  }}
-                  data={searchItems}
-                  search
-                  maxHeight={300}
-                  labelField="name"     // tên field hiển thị
-                  valueField="id"       // field là giá trị
-                  placeholder="Search..."
-                  searchPlaceholder="Search..."
-                  value={value}
-                  onChange={(item) => {
-                    setValue(item.id);
-                    handleProductPress(item); // giống như onItemSelect
-                  }}
-              />
+        <TouchableOpacity
+          style={styles.cartIconContainer}
+          // onPress={() => navigation.navigate("cart")}
+        >
+          {cartItems.length > 0 && (
+            <View style={styles.cartItemCountContainer}>
+              <Text style={styles.cartItemCountText}>{cartItems.length}</Text>
             </View>
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.scanButton}>
-                <Text style={styles.scanButtonText}>Scan</Text>
-
-                <Image source={scanIcon} style={{ width: 20, height: 20 }} />
-              </TouchableOpacity>
-            </View>
+          )}
+          <Image source={cartIcon} />
+        </TouchableOpacity>
+      </View>
+      <View style={styles.bodyContainer}>
+        <View style={styles.searchContainer}>
+          <View style={styles.inputContainer}>
+            <Dropdown
+              style={{
+                height: 50,
+                borderColor: colors.muted,
+                borderWidth: 1,
+                borderRadius: 8,
+                paddingHorizontal: 10,
+                backgroundColor: colors.white,
+              }}
+              placeholderStyle={{ color: colors.muted }}
+              selectedTextStyle={{ color: colors.primary }}
+              inputSearchStyle={{
+                height: 40,
+                borderRadius: 8,
+                backgroundColor: colors.light,
+                paddingHorizontal: 10,
+              }}
+              itemTextStyle={{ color: colors.muted }}
+              containerStyle={{
+                backgroundColor: colors.white,
+                borderRadius: 8,
+              }}
+              data={searchItems}
+              search
+              maxHeight={300}
+              labelField="name"     // tên field hiển thị
+              valueField="id"       // field là giá trị
+              placeholder="Search..."
+              searchPlaceholder="Search..."
+              value={value}
+              onChange={(item) => {
+                setValue(item.id);
+                handleProductPress(item); // giống như onItemSelect
+              }}
+            />
           </View>
-          <ScrollView nestedScrollEnabled={true}>
-            <View style={styles.promotiomSliderContainer}>
-              <Carousel
-                  width={200}
-                  height={200}
-                  loop
-                  autoPlay
-                  data={slides}
-                  scrollAnimationDuration={1000}
-                  renderItem={({ item, index }) => (
-                      <TouchableOpacity onPress={() => console.log("Image pressed", index)}>
-                        <Image
-                            source={{ uri: item }}
-                            style={{
-                              width: "100%",
-                              height: 200,
-                              borderRadius: 10,
-                            }}
-                            resizeMode="cover"
-                        />
-                      </TouchableOpacity>
-                  )}
-              />
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.scanButton}>
+              <Text style={styles.scanButtonText}>Scan</Text>
+              <Image source={scanIcon} style={{ width: 20, height: 20 }} />
+            </TouchableOpacity>
+          </View>
+        </View>
+        <ScrollView nestedScrollEnabled={true}>
+          <View style={styles.promotiomSliderContainer}>
+            <Carousel
+              width={200}
+              height={200}
+              loop
+              autoPlay
+              data={slides}
+              scrollAnimationDuration={1000}
+              renderItem={({ item, index }) => (
+                <TouchableOpacity onPress={() => console.log("Image pressed", index)}>
+                  <Image
+                    source={{ uri: item }}
+                    style={{
+                      width: "100%",
+                      height: 200,
+                      borderRadius: 10,
+                    }}
+                    resizeMode="cover"
+                  />
+                </TouchableOpacity>
+              )}
+            />
+          </View>
+          <View style={styles.primaryTextContainer}>
+            <Text style={styles.primaryText}>Categories</Text>
+          </View>
+          <View style={styles.categoryContainer}>
+            <FlatList
+              showsHorizontalScrollIndicator={false}
+              style={styles.flatListContainer}
+              horizontal={true}
+              data={category}
+              keyExtractor={(item) => item.productId}
+              renderItem={({ item, index }) => (
+                <View style={{ marginBottom: 10 }} key={item.productId}>
+                  <CustomIconButton
+                    key={item.productId}
+                    text={item.title}
+                    image={item.image} onPress={function (): void {
+                      throw new Error("Function not implemented.");
+                    } }                    // onPress={() =>
+                    //   navigation.jumpTo("categories", { categoryID: item })
+                    // }
+                  />
+                </View>
+              )}
+            />
+            <View style={styles.emptyView}></View>
+          </View>
+          <View style={styles.primaryTextContainer}>
+            <Text style={styles.primaryText}>New Arrivals</Text>
+          </View>
+          {products.length === 0 ? (
+            <View style={styles.productCardContainerEmpty}>
+              <Text style={styles.productCardContainerEmptyText}>
+                No Product
+              </Text>
             </View>
-            <View style={styles.primaryTextContainer}>
-              <Text style={styles.primaryText}>Categories</Text>
-            </View>
-            <View style={styles.categoryContainer}>
+          ) : (
+            <View style={styles.productCardContainer}>
               <FlatList
-                  showsHorizontalScrollIndicator={false}
-                  style={styles.flatListContainer}
-                  horizontal={true}
-                  data={category}
-                  keyExtractor={(item) => item.productId}
-                  renderItem={({ item, index }) => (
-                      <View style={{ marginBottom: 10 }} key={item.productId}>
-                        <CustomIconButton
-                            key={item.productId}
-                            text={item.title}
-                            image={item.image} onPress={function (): void {
-                          throw new Error("Function not implemented.");
-                        } }                    // onPress={() =>
-                            //   navigation.jumpTo("categories", { categoryID: item })
-                            // }
-                        />
-                      </View>
-                  )}
+                refreshControl={
+                  <RefreshControl refreshing={refeshing} onRefresh={handleOnRefresh} />
+                }
+                showsHorizontalScrollIndicator={false}
+                initialNumToRender={5}
+                horizontal={true}
+                data={products.slice(0, 4)}
+                keyExtractor={(item) => item.productId.toString()}
+                renderItem={({ item, index }) => (
+                  <View
+                    key={item.productId}
+                    style={{ marginLeft: 5, marginBottom: 10, marginRight: 5 }}
+                  >
+                    <ProductCard
+                      name={item.productName}
+                      image={`${network.serverip}/uploads/${item.img}`}
+                      price={item.price}
+                      quantity={item.stock}
+                      onPress={() => handleProductPress(item)}
+                      onPressSecondary={() => handleAddToCart(item.productId)}
+                    />
+                  </View>
+                )}
               />
               <View style={styles.emptyView}></View>
             </View>
-            <View style={styles.primaryTextContainer}>
-              <Text style={styles.primaryText}>New Arrivals</Text>
-            </View>
-            {products.length === 0 ? (
-                <View style={styles.productCardContainerEmpty}>
-                  <Text style={styles.productCardContainerEmptyText}>
-                    No Product
-                  </Text>
-                </View>
-            ) : (
-                <View style={styles.productCardContainer}>
-                  <FlatList
-                      refreshControl={
-                        <RefreshControl refreshing={refeshing} onRefresh={handleOnRefresh} />
-                      }
-                      showsHorizontalScrollIndicator={false}
-                      initialNumToRender={5}
-                      horizontal={true}
-                      data={products.slice(0, 4)}
-                      keyExtractor={(item) => item.productId.toString()}
-                      renderItem={({ item, index }) => (
-                          <View
-                              key={item.productId}
-                              style={{ marginLeft: 5, marginBottom: 10, marginRight: 5 }}
-                          >
-                            <ProductCard
-                                name={item.productName}
-                                image={`${network.serverip}/uploads/${item.img}`}
-                                price={item.price}
-                                quantity={item.stock}
-                                onPress={() => handleProductPress(item)}
-                                onPressSecondary={() => handleAddToCart(item.productId)}
-                            />
-                          </View>
-                      )}
-                  />
-                  <View style={styles.emptyView}></View>
-                </View>
-            )}
-          </ScrollView>
-        </View>
+          )}
+        </ScrollView>
       </View>
+    </View>
   );
 };
 

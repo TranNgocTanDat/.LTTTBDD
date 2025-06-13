@@ -6,11 +6,17 @@ import Tabs from "./tabs/Tabs";
 import { UserResponse } from "@/model/User";
 import Splash from "@/screens/Splash";
 import MyOrderDetailScreen, { Order } from "@/screens/user/MyOrderDetailScreen";
+
 import CartScreen from "@/screens/cart/CartScreen";
 
 // import SignupScreen from "../screens/auth/SignupScreen";
+
+import SignupScreen from "../screens/auth/RegisterScreen";
+import ForgetPasswordScreen from "../screens/auth/ForgetPasswordScreen";
+import VerifyUserScreen from "../screens/auth/VerifyUserScreen";
+
 // import Splash from "../screens/auth/Splash";
-// import ForgetPasswordScreen from "../screens/auth/ForgetPasswordScreen";
+
 // import UpdatePasswordScreen from "../screens/profile/UpdatePasswordScreen";
 // import MyAccountScreen from "../screens/profile/MyAccountScreen";
 // import AddProductScreen from "../screens/admin/AddProductScreen";
@@ -37,6 +43,7 @@ export type RootStackParamList = {
   splash: undefined;
   login: undefined;
   signup: undefined;
+  verify :{ email: string };
   forgetpassword: undefined;
   updatepassword: undefined;
   myaccount: undefined;
@@ -73,8 +80,9 @@ const Routes: React.FC = () => {
       <Stack.Navigator initialRouteName="splash" screenOptions={{ headerShown: false }}>
         <Stack.Screen name="splash" component={Splash} />
         <Stack.Screen name="login" component={LoginScreen} />
-        {/* <Stack.Screen name="signup" component={SignupScreen} /> */}
-        {/* <Stack.Screen name="forgetpassword" component={ForgetPasswordScreen} /> */}
+        <Stack.Screen name="signup" component={SignupScreen} />
+        <Stack.Screen name="forgetpassword" component={ForgetPasswordScreen} />
+          <Stack.Screen name="verify" component={VerifyUserScreen} />
         {/* <Stack.Screen name="updatepassword" component={UpdatePasswordScreen} /> */}
         {/* <Stack.Screen name="myaccount" component={MyAccountScreen} /> */}
         {/* <Stack.Screen name="mywishlist" component={MyWishlistScreen} /> */}
