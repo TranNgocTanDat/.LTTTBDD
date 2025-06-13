@@ -28,6 +28,7 @@ interface CartStore {
     incrementCartItemQuantity: (id: string, size: string) => void;
     decrementCartItemQuantity: (id: string, size: string) => void;
     calculateCartPrice: () => void;
+     removeFromCart: (id: string, size: string) => void;
     addToOrderHistoryListFromCart: () => void;
     OrderHistoryList: {
         OrderDate: string;
@@ -134,6 +135,28 @@ export const useStore = create<CartStore>()(
                         state.CartPrice = total.toFixed(2);
                     }),
                 ),
+
+            removeFromCart: (id, size) =>
+                set(
+                    produce((state: CartStore) => {
+                        for (let i = 0; i < state.CartList.length; i++) {
+                            if (state.CartList[i].id === id) {
+                                const prices = state.CartList[i].prices;
+                                if (prices.length === 1) {
+                                    // Nếu chỉ còn 1 size, xóa luôn item
+                                    state.CartList.splice(i, 1);
+                                } else {
+                                    // Nếu còn nhiều size, chỉ xóa size đó
+                                    state.CartList[i].prices = prices.filter(
+                                        (price) => price.size !== size
+                                    );
+                                }
+                                break;
+                            }
+                        }
+                    })
+                ),
+
 
             addToOrderHistoryListFromCart: () =>
                 set(

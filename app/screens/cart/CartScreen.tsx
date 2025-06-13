@@ -28,8 +28,45 @@ const CartScreen = ({ navigation }: any) => {
     const calculateCartPrice = useStore(
         (state: any) => state.calculateCartPrice
     );
+    const removeFromCart = useStore((state: any) => state.removeFromCart);
 
-    const tabBarHeight = useBottomTabBarHeight();
+    const addToCart = useStore((state: any) => state.addToCart);
+    useEffect(() => {
+        if (CartList.length === 0) {
+            addToCart({
+                id: "1",
+                name: "Espresso",
+                prices: [
+                    { size: "S", price: "3.00", quantity: 1 },
+                ],
+                imagelink_square: "https://via.placeholder.com/100",
+                special_ingredient: "Arabica",
+                roasted: "Medium",
+                type: "Coffee",
+                index: 0,
+            });
+
+            addToCart({
+                id: "2",
+                name: "Latte",
+                prices: [
+                    { size: "M", price: "4.50", quantity: 2 },
+                ],
+                imagelink_square: "https://via.placeholder.com/100",
+                special_ingredient: "Milk",
+                roasted: "Light",
+                type: "Coffee",
+                index: 1,
+            });
+        }
+    }, []);
+
+
+    const removeHandler = (id: string, size: string) => {
+        removeFromCart(id, size);
+        calculateCartPrice();
+    };
+
 
     useEffect(() => {
         calculateCartPrice();
@@ -71,7 +108,7 @@ const CartScreen = ({ navigation }: any) => {
 
             <ScrollView
                 showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ paddingBottom: tabBarHeight }}
+                contentContainerStyle={{ paddingBottom: 80 }}
                 style={styles.bodyContainer}
             >
                 {CartList.length === 0 ? (
@@ -81,18 +118,12 @@ const CartScreen = ({ navigation }: any) => {
                         {CartList.map((item: any) => (
                             <TouchableOpacity
                                 key={item.id}
-                                onPress={() =>
-                                    navigation.push("Details", {
-                                        index: item.index,
-                                        id: item.id,
-                                        type: item.type,
-                                    })
-                                }
                             >
                                 <CartItem
                                     {...item}
                                     incrementCartItemQuantityHandler={incrementHandler}
                                     decrementCartItemQuantityHandler={decrementHandler}
+                                    removeFromCartHandler={removeHandler}
                                 />
                             </TouchableOpacity>
                         ))}
@@ -121,51 +152,56 @@ export default CartScreen;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: COLORS.primaryBlackHex,
-        padding: SPACING.space_15,
-        paddingBottom: 0,
+        backgroundColor: COLORS.secondaryLightGreyHex,
+        paddingHorizontal: SPACING.space_20,
+        paddingTop: 50,
+        paddingBottom: 150,
     },
     TopBarContainer: {
-        width: "100%",
         flexDirection: "row",
         alignItems: "center",
-        marginBottom: 10,
+        marginBottom: SPACING.space_15,
     },
     screenNameContainer: {
-        marginBottom: 10,
+        marginBottom: SPACING.space_10,
     },
     screenNameText: {
-        fontSize: 30,
-        fontWeight: "800",
-        color: COLORS.primaryWhiteHex,
+        fontSize: 28,
+        fontWeight: "700",
+        color: COLORS.primaryBlackHex,
+        letterSpacing: 0.3,
     },
     screenNameParagraph: {
-        marginTop: 10,
-        fontSize: 15,
+        marginTop: 4,
+        fontSize: 14,
         color: COLORS.primaryGreyHex,
     },
     bodyContainer: {
         flex: 1,
     },
     cartItemsContainer: {
-        paddingHorizontal: SPACING.space_20,
-        gap: SPACING.space_20,
+        paddingTop: SPACING.space_10,
+        gap: SPACING.space_15,
     },
     totalContainer: {
         flexDirection: "row",
         justifyContent: "space-between",
-        paddingVertical: 10,
+        alignItems: "center",
+        marginTop: SPACING.space_20,
+        paddingVertical: SPACING.space_15,
         borderTopWidth: 1,
         borderColor: COLORS.primaryGreyHex,
-        marginTop: 20,
     },
     totalText: {
-        fontSize: 16,
-        color: COLORS.primaryWhiteHex,
+        fontSize: 18,
+        fontWeight: "500",
+        color: COLORS.primaryBlackHex,
     },
     totalAmount: {
-        fontSize: 16,
-        fontWeight: "bold",
-        color: COLORS.primaryWhiteHex,
+        fontSize: 18,
+        fontWeight: "700",
+        color: COLORS.primaryBlackHex,
+        margin: 10,
     },
 });
+
