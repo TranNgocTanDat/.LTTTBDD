@@ -9,8 +9,6 @@ import {
   RefreshControl,
   ScrollView,
   TextInput,
-  Platform,
-  SafeAreaView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useRef, useState } from "react";
@@ -35,12 +33,12 @@ import Carousel from "react-native-reanimated-carousel";
 
 type TabParamList = {
   home: { user: UserResponse };
-  categories: { user: UserResponse; categoryID?: string };
+  categories: {user:UserResponse, categoryID?: string };
   myorder: { user: UserResponse };
   user: { user: UserResponse };
 };
 
-type Props = BottomTabScreenProps<TabParamList, "home">;
+type Props = BottomTabScreenProps<TabParamList, 'home'>;
 
 const slides = [
   require("../assets/image/banners/banner.png"),
@@ -70,11 +68,6 @@ const category = [
   },
 ];
 
-type Item = {
-  id: string;
-  name: string;
-};
-
 const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const dispatch = useDispatch();
@@ -87,9 +80,7 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
   const [error, setError] = useState("");
   const [userInfo, setUserInfo] = useState<any>({});
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredProducts, setFilteredProducts] = useState<ProductResponse[]>(
-    []
-  );
+  const [filteredProducts, setFilteredProducts] = useState<ProductResponse[]>([]);
   const carouselRef = useRef<ScrollView>(null);
   const [carouselIndex, setCarouselIndex] = useState(0);
 
@@ -112,9 +103,9 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
     }
   };
 
-  const handleProductPress = (product: ProductResponse) => {
-    // navigation.navigate("productdetail", { product });
-  };
+  // const handleProductPress = (product: ProductResponse) => {
+  //   navigation.navigate("productdetail", { product });
+  // };
 
   const handleAddToCart = (productId: number) => {
     if (!authenticated) {
@@ -124,23 +115,23 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
     addToCart({ productId });
   };
 
-  const fetchProduct = () => {
-    fetch(`${network.serverip}/products`)
-      .then((res) => res.json())
-      .then((result) => {
-        if (result.success) {
-          setProducts(result.data);
-          setFilteredProducts(result.data);
-          setError("");
-        } else {
-          setError(result.message);
-        }
-      })
-      .catch((err) => {
-        setError(err.message);
-        console.log("error", err);
-      });
-  };
+  // const fetchProduct = () => {
+  //   fetch(`${network.serverip}/products`)
+  //     .then((res) => res.json())
+  //     .then((result) => {
+  //       if (result.success) {
+  //         setProducts(result.data);
+  //         setFilteredProducts(result.data);
+  //         setError("");
+  //       } else {
+  //         setError(result.message);
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       setError(err.message);
+  //       console.log("error", err);
+  //     });
+  // };
 
   const handleOnRefresh = () => {
     setRefreshing(true);
@@ -165,39 +156,22 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
       setFilteredProducts(products);
     } else {
       const lower = searchQuery.toLowerCase();
-      setFilteredProducts(
-        products.filter((p) => p.productName.toLowerCase().includes(lower))
-      );
+      setFilteredProducts(products.filter(p => p.productName.toLowerCase().includes(lower)));
     }
   }, [searchQuery, products]);
 
   const searchItems = [
-    { id: "1", name: "PlayStation 5" },
-    { id: "2", name: "Xbox Series X" },
-    { id: "3", name: "Nintendo Switch" },
+    { id: '1', name: 'PlayStation 5' },
+    { id: '2', name: 'Xbox Series X' },
+    { id: '3', name: 'Nintendo Switch' },
   ];
 
-  const [query, setQuery] = useState("");
-  const [filteredData, setFilteredData] = useState<Item[]>([]);
-  const [showDropdown, setShowDropdown] = useState(false);
-
-  const handleSearch = (text: string) => {
-    setQuery(text);
-    if (text.trim() === "") {
-      setFilteredData([]);
-      setShowDropdown(false);
-      return;
-    }
-
-    const filtered = searchItems.filter((item) =>
-      item.name.toLowerCase().includes(text.toLowerCase())
-    );
-    setFilteredData(filtered);
-    setShowDropdown(true);
-  };
+  function handleProductPress(item: any) {
+    throw new Error("Function not implemented.");
+  }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar />
       <View style={styles.topBarContainer}>
         <TouchableOpacity disabled>
@@ -207,78 +181,83 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
           <Image source={easybuylogo} style={styles.logo} />
           <Text style={styles.toBarText}>EasyBuy</Text>
         </View>
-        <TouchableOpacity>
+        <TouchableOpacity
+          style={styles.cartIconContainer}
+          // onPress={() => navigation.navigate("cart")}
+        >
+          {cartItems.length > 0 && (
+            <View style={styles.cartItemCountContainer}>
+              <Text style={styles.cartItemCountText}>{cartItems.length}</Text>
+            </View>
+          )}
           <Image source={cartIcon} />
         </TouchableOpacity>
       </View>
-      <View style={styles.searchContainer}>
-          <View style={styles.searchWrapper}>
-            <View style={styles.searchInputContainer}>
-              <Ionicons name="search" size={20} color="#9A9A9A" />
-              <TextInput
-                style={styles.searchInput}
-                placeholder="Search products"
-                value={query}
-                onChangeText={handleSearch}
-              />
-            </View>
-
-            {showDropdown && (
-              <FlatList
-                style={styles.dropdownList}
-                data={filteredData}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                  <TouchableOpacity
-                    style={styles.dropdownItem}
-                    onPress={() => {
-                      setQuery(item.name);
-                      setShowDropdown(false);
-                      // handleProductPress(item); // xử lý chọn item
-                    }}
-                  >
-                    <Text style={styles.dropdownItemText}>{item.name}</Text>
-                  </TouchableOpacity>
-                )}
-              />
-            )}
+      <View style={styles.bodyContainer}>
+        <View style={styles.searchContainer}>
+          <View style={styles.inputContainer}>
+            <Dropdown
+              style={{
+                height: 50,
+                borderColor: colors.muted,
+                borderWidth: 1,
+                borderRadius: 8,
+                paddingHorizontal: 10,
+                backgroundColor: colors.white,
+              }}
+              placeholderStyle={{ color: colors.muted }}
+              selectedTextStyle={{ color: colors.primary }}
+              inputSearchStyle={{
+                height: 40,
+                borderRadius: 8,
+                backgroundColor: colors.light,
+                paddingHorizontal: 10,
+              }}
+              itemTextStyle={{ color: colors.muted }}
+              containerStyle={{
+                backgroundColor: colors.white,
+                borderRadius: 8,
+              }}
+              data={searchItems}
+              search
+              maxHeight={300}
+              labelField="name"     // tên field hiển thị
+              valueField="id"       // field là giá trị
+              placeholder="Search..."
+              searchPlaceholder="Search..."
+              value={value}
+              onChange={(item) => {
+                setValue(item.id);
+                handleProductPress(item); // giống như onItemSelect
+              }}
+            />
           </View>
-
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.cartIconContainer}>
-              {cartItems.length > 0 && (
-                <View style={styles.cartItemCountContainer}>
-                  <Text style={styles.cartItemCountText}>
-                    {cartItems.length}
-                  </Text>
-                </View>
-              )}
-              <Image source={cartIcon} />
+            <TouchableOpacity style={styles.scanButton}>
+              <Text style={styles.scanButtonText}>Scan</Text>
+              <Image source={scanIcon} style={{ width: 20, height: 20 }} />
             </TouchableOpacity>
           </View>
         </View>
-      <View style={styles.bodyContainer}>
-        <ScrollView  nestedScrollEnabled={true} >
+        <ScrollView nestedScrollEnabled={true}>
           <View style={styles.promotiomSliderContainer}>
             <Carousel
-              width={300}
+              width={200}
               height={200}
               loop
               autoPlay
               data={slides}
               scrollAnimationDuration={1000}
               renderItem={({ item, index }) => (
-                <TouchableOpacity
-                  onPress={() => console.log("Image pressed", index)}
-                >
+                <TouchableOpacity onPress={() => console.log("Image pressed", index)}>
                   <Image
-                    source={item} // <-- sửa ở đây
+                    source={{ uri: item }}
                     style={{
                       width: "100%",
                       height: 200,
                       borderRadius: 10,
                     }}
-                    resizeMode="contain"
+                    resizeMode="cover"
                   />
                 </TouchableOpacity>
               )}
@@ -299,10 +278,9 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
                   <CustomIconButton
                     key={item.productId}
                     text={item.title}
-                    image={item.image}
-                    onPress={function (): void {
+                    image={item.image} onPress={function (): void {
                       throw new Error("Function not implemented.");
-                    }} // onPress={() =>
+                    } }                    // onPress={() =>
                     //   navigation.jumpTo("categories", { categoryID: item })
                     // }
                   />
@@ -324,10 +302,7 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
             <View style={styles.productCardContainer}>
               <FlatList
                 refreshControl={
-                  <RefreshControl
-                    refreshing={refeshing}
-                    onRefresh={handleOnRefresh}
-                  />
+                  <RefreshControl refreshing={refeshing} onRefresh={handleOnRefresh} />
                 }
                 showsHorizontalScrollIndicator={false}
                 initialNumToRender={5}
@@ -355,174 +330,181 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
           )}
         </ScrollView>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
 export default HomeScreen;
 
-export const styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
+    width: "100%",
+    // flexDirection: "row",
+    backgroundColor: colors.light,
+    alignItems: "center",
+    justifyContent: "flex-start",
+    paddingBottom: 0,
     flex: 1,
-    backgroundColor: "#fff",
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   topBarContainer: {
     width: "100%",
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    display: "flex",
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#fff",
-    zIndex: 1000,
-  },
-  topbarlogoContainer: {
-    flexDirection: "row",
     alignItems: "center",
-  },
-  logo: {
-    width: 28,
-    height: 28,
-    resizeMode: "contain",
-    marginRight: 6,
+    padding: 20,
   },
   toBarText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#333",
+    fontSize: 15,
+    fontWeight: "600",
+  },
+  topbarlogoContainer: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: 20,
   },
   bodyContainer: {
-    flex: 1,
     width: "100%",
+    // flexDirection: "row",
+    paddingBottom: 0,
+    flex: 1,
+  },
+  logoContainer: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-evenly",
+  },
+  logo: {
+    height: 30,
+    width: 30,
+    resizeMode: "contain",
+  },
+  secondaryText: {
+    fontSize: 25,
+    fontWeight: "bold",
   },
   searchContainer: {
-    top: Platform.OS === "android" ? 55 : 45,
-    zIndex: 999,
+    marginTop: 10,
+    padding: 10,
+    width: "100%",
+    display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    width: "100%",
-    backgroundColor: "#fff",
+    justifyContent: "space-evenly",
   },
-  searchWrapper: {
-    flex: 1,
-    marginRight: 10,
-    position: "relative",
-  },
-  searchInputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#F2F2F7",
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    borderWidth: 1,
-    borderColor: "#E5E5EA",
-    height: 42,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: 16,
-    marginLeft: 8,
-    color: "#000",
-  },
-  dropdownList: {
-    position: "absolute",
-    top: 48,
-    width: "100%",
-    backgroundColor: "white",
-    borderColor: "#E5E5EA",
-    borderWidth: 1,
-    borderRadius: 8,
-    maxHeight: 200,
-    zIndex: 999,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  dropdownItem: {
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderBottomWidth: 0.5,
-    borderBottomColor: "#E5E5EA",
-  },
-  dropdownItemText: {
-    fontSize: 16,
-    color: "#333",
-  },
-  buttonContainer: {
-    width: 40,
-    height: 40,
+  inputContainer: {
+    width: "70%",
+    display: "flex",
     justifyContent: "center",
     alignItems: "center",
   },
+  buttonContainer: {
+    width: "20%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  scanButton: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: colors.primary,
+    borderRadius: 10,
+    height: 40,
+    width: "100%",
+  },
+  scanButtonText: {
+    fontSize: 15,
+    color: colors.light,
+    fontWeight: "bold",
+  },
+  primaryTextContainer: {
+    padding: 20,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+    width: "100%",
+    paddingTop: 10,
+    paddingBottom: 10,
+  },
+  primaryText: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  flatListContainer: {
+    width: "100%",
+    height: 50,
+    marginTop: 10,
+    marginLeft: 10,
+  },
+  promotiomSliderContainer: {
+    margin: 5,
+    height: 140,
+    backgroundColor: colors.light,
+  },
+  categoryContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    width: "100%",
+    height: 60,
+    marginLeft: 10,
+  },
+  emptyView: { width: 30 },
+  productCardContainer: {
+    paddingLeft: 10,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    width: "100%",
+    height: 240,
+    marginLeft: 10,
+    paddingTop: 0,
+  },
+  productCardContainerEmpty: {
+    padding: 10,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+    height: 240,
+    marginLeft: 10,
+    paddingTop: 0,
+  },
+  productCardContainerEmptyText: {
+    fontSize: 15,
+    fontStyle: "italic",
+    color: colors.muted,
+    fontWeight: "600",
+  },
   cartIconContainer: {
-    position: "relative",
+    display: "flex",
     justifyContent: "center",
     alignItems: "center",
   },
   cartItemCountContainer: {
     position: "absolute",
-    top: -6,
-    right: -6,
-    backgroundColor: "#FF3B30",
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+    zIndex: 10,
+    top: -10,
+    left: 10,
+    display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    zIndex: 10,
+    height: 22,
+    width: 22,
+    backgroundColor: colors.danger,
+    borderRadius: 11,
   },
   cartItemCountText: {
-    color: "#fff",
+    color: colors.white,
+    fontWeight: "bold",
     fontSize: 12,
-    fontWeight: "bold",
-  },
-  promotiomSliderContainer: {
-    marginTop: 100, // đảm bảo dưới phần search
-    marginHorizontal: 10,
-    height: 200,
-    borderRadius: 10,
-    overflow: "hidden",
-    backgroundColor: "#f9f9f9",
-  },
-  primaryTextContainer: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-  },
-  primaryText: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#333",
-  },
-  categoryContainer: {
-    paddingLeft: 10,
-    paddingVertical: 10,
-  },
-  flatListContainer: {
-    height: 60,
-  },
-  emptyView: {
-    width: 30,
-  },
-  productCardContainer: {
-    paddingLeft: 10,
-    paddingBottom: 20,
-    paddingTop: 5,
-  },
-  productCardContainerEmpty: {
-    justifyContent: "center",
-    alignItems: "center",
-    height: 240,
-    paddingHorizontal: 20,
-  },
-  productCardContainerEmptyText: {
-    fontSize: 15,
-    fontStyle: "italic",
-    color: "#999",
-    fontWeight: "600",
   },
 });
