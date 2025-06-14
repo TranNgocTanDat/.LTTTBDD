@@ -2,7 +2,7 @@ import store from "@/redux/store";
 import axios, { AxiosResponse, AxiosRequestConfig } from "axios";
 
 
-const DOMAIN = "http://192.168.100.225:8080/api";
+const DOMAIN = "http://192.168.88.107:8080/api";
 
 
 

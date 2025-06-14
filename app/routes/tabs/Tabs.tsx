@@ -18,7 +18,7 @@ import HomeScreen from "@/screens/HomeScreen";
 import { RootStackParamList } from "@/routes/Routers";
 import { UserResponse } from "@/model/User";
 import MyOrderScreen from "@/screens/user/MyOrderScreen";
-import CartScreen from "@/screens/cart/CartScreen";
+import CartScreen from "@/screens/user/CartScreen";
 
 type Props = NativeStackScreenProps<RootStackParamList, "tab">;
 
