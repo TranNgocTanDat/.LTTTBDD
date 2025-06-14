@@ -86,7 +86,7 @@ const CartScreen = ({ navigation }: any) => {
                     <Ionicons
                         name="arrow-back-circle-outline"
                         size={30}
-                        color={COLORS.primaryWhiteHex}
+                        color={COLORS.primaryBlackHex}
                     />
                 </TouchableOpacity>
             </View>
@@ -138,7 +138,7 @@ export default CartScreen;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: COLORS.secondaryLightGreyHex,
+        backgroundColor: "#ffffff",
         paddingHorizontal: SPACING.space_20,
         paddingTop: 50,
         paddingBottom: 80,

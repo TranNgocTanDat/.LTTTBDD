@@ -99,14 +99,14 @@ export default NotificationScreen;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: COLORS.secondaryLightGreyHex,
+        backgroundColor: "#ffffff",
         paddingTop: 60,
     },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: COLORS.primaryBlackHex,
+        backgroundColor: COLORS.primaryOrangeHex,
         paddingVertical: SPACING.space_15,
         paddingHorizontal: SPACING.space_20,
     },
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     clearText: {
-        color: COLORS.primaryOrangeHex,
+        color: COLORS.primaryWhiteHex,
         fontWeight: '600',
     },
     notificationItem: {
