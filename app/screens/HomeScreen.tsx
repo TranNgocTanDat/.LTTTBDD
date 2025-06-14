@@ -13,14 +13,13 @@ import {
   SafeAreaView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import cartIcon from "../assets/icons/cart_beg.png";
-import scanIcon from "../assets/icons/scan_icons.png";
 import easybuylogo from "../assets/logo/logo.png";
 import { colors } from "../constants";
 import { network } from "../constants";
 import { useSelector, useDispatch } from "react-redux";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import cartApi from "@/services/cartApi";
 import { addCartItem } from "@/redux/cartSlice";
 import { RootState } from "@/redux/store";
@@ -30,8 +29,14 @@ import CustomIconButton from "@/components/CustomIconButton/CustomIconButton";
 import ProductCard from "@/components/ProductCard/ProductCard";
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { UserResponse } from "@/model/User";
-import { Dropdown } from "react-native-element-dropdown";
 import Carousel from "react-native-reanimated-carousel";
+import { RootStackParamList } from "@/routes/Routers";
+import { CompositeScreenProps } from "@react-navigation/native";
+import productApi from "@/services/productApi";
+import debounce from "lodash.debounce";
+import { useDebounce } from "use-debounce";
+import { Category, CategoryResponse } from "@/model/Category";
+import categoryApi from "@/services/categoryApi";
 
 type TabParamList = {
   home: { user: UserResponse };
@@ -40,40 +45,15 @@ type TabParamList = {
   user: { user: UserResponse };
 };
 
-type Props = BottomTabScreenProps<TabParamList, "home">;
+type Props = CompositeScreenProps<
+  BottomTabScreenProps<TabParamList, "home">,
+  NativeStackScreenProps<RootStackParamList>
+>;
 
 const slides = [
-  require("../assets/image/banners/banner.png"),
-  require("../assets/image/banners/banner.png"),
+  require("../assets/image/banners/banner.jpg"),
+  require("../assets/image/banners/banner1.jpg"),
 ];
-
-const category = [
-  {
-    productId: "62fe244f58f7aa8230817f89",
-    title: "Garments",
-    image: require("../assets/icons/garments.png"),
-  },
-  {
-    productId: "62fe243858f7aa8230817f86",
-    title: "Electornics",
-    image: require("../assets/icons/electronics.png"),
-  },
-  {
-    productId: "62fe241958f7aa8230817f83",
-    title: "Cosmentics",
-    image: require("../assets/icons/cosmetics.png"),
-  },
-  {
-    productId: "62fe246858f7aa8230817f8c",
-    title: "Groceries",
-    image: require("../assets/icons/grocery.png"),
-  },
-];
-
-type Item = {
-  id: string;
-  name: string;
-};
 
 const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
   const cartItems = useSelector((state: RootState) => state.cart.items);
@@ -81,15 +61,8 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
   const { user } = route.params;
   const { authenticated } = useSelector((state: RootState) => state.auth);
   const queryClient = useQueryClient();
-  const [value, setValue] = useState(null);
-  const [products, setProducts] = useState<ProductResponse[]>([]);
   const [refeshing, setRefreshing] = useState(false);
-  const [error, setError] = useState("");
   const [userInfo, setUserInfo] = useState<any>({});
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filteredProducts, setFilteredProducts] = useState<ProductResponse[]>(
-    []
-  );
   const carouselRef = useRef<ScrollView>(null);
   const [carouselIndex, setCarouselIndex] = useState(0);
 
@@ -104,6 +77,12 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
     },
   });
 
+  const { data: products } = useQuery({
+    queryKey: ["products", { limit: 2, offset: 0 }],
+    queryFn: () => productApi.getProducts(4, 0),
+    refetchOnWindowFocus: false,
+  });
+
   const convertToJSON = (obj: string | any) => {
     try {
       setUserInfo(JSON.parse(obj));
@@ -113,7 +92,7 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const handleProductPress = (product: ProductResponse) => {
-    // navigation.navigate("productdetail", { product });
+    navigation.getParent()?.navigate("productdetail", { product });
   };
 
   const handleAddToCart = (productId: number) => {
@@ -122,24 +101,6 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
       return;
     }
     addToCart({ productId });
-  };
-
-  const fetchProduct = () => {
-    fetch(`${network.serverip}/products`)
-      .then((res) => res.json())
-      .then((result) => {
-        if (result.success) {
-          setProducts(result.data);
-          setFilteredProducts(result.data);
-          setError("");
-        } else {
-          setError(result.message);
-        }
-      })
-      .catch((err) => {
-        setError(err.message);
-        console.log("error", err);
-      });
   };
 
   const handleOnRefresh = () => {
@@ -160,41 +121,21 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
     return () => clearInterval(interval);
   }, [carouselIndex]);
 
-  useEffect(() => {
-    if (searchQuery.trim() === "") {
-      setFilteredProducts(products);
-    } else {
-      const lower = searchQuery.toLowerCase();
-      setFilteredProducts(
-        products.filter((p) => p.productName.toLowerCase().includes(lower))
-      );
-    }
-  }, [searchQuery, products]);
-
-  const searchItems = [
-    { id: "1", name: "PlayStation 5" },
-    { id: "2", name: "Xbox Series X" },
-    { id: "3", name: "Nintendo Switch" },
-  ];
-
   const [query, setQuery] = useState("");
-  const [filteredData, setFilteredData] = useState<Item[]>([]);
-  const [showDropdown, setShowDropdown] = useState(false);
+  const [debouncedQuery] = useDebounce(query, 400);
 
-  const handleSearch = (text: string) => {
-    setQuery(text);
-    if (text.trim() === "") {
-      setFilteredData([]);
-      setShowDropdown(false);
-      return;
-    }
+  const { data = [], isLoading } = useQuery<ProductResponse[]>({
+    queryKey: ["search", debouncedQuery],
+    queryFn: () => productApi.searchGames(debouncedQuery),
+    enabled: !!debouncedQuery,
+  });
 
-    const filtered = searchItems.filter((item) =>
-      item.name.toLowerCase().includes(text.toLowerCase())
-    );
-    setFilteredData(filtered);
-    setShowDropdown(true);
-  };
+  //category
+  const { data: category } = useQuery<CategoryResponse[]>({
+    queryKey: ["categories"],
+    queryFn: categoryApi.getCategories,
+    refetchOnWindowFocus: false,
+  });
 
   return (
     <SafeAreaView style={styles.container}>
@@ -207,64 +148,68 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
           <Image source={easybuylogo} style={styles.logo} />
           <Text style={styles.toBarText}>EasyBuy</Text>
         </View>
-        <TouchableOpacity
-            onPress={() => navigation.getParent()?.navigate("cart")}>
+        <TouchableOpacity>
           <Image source={cartIcon} />
         </TouchableOpacity>
       </View>
       <View style={styles.searchContainer}>
-          <View style={styles.searchWrapper}>
-            <View style={styles.searchInputContainer}>
-              <Ionicons name="search" size={20} color="#9A9A9A" />
-              <TextInput
-                style={styles.searchInput}
-                placeholder="Search products"
-                value={query}
-                onChangeText={handleSearch}
-              />
-            </View>
-
-            {showDropdown && (
-              <FlatList
-                style={styles.dropdownList}
-                data={filteredData}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                  <TouchableOpacity
-                    style={styles.dropdownItem}
-                    onPress={() => {
-                      setQuery(item.name);
-                      setShowDropdown(false);
-                      // handleProductPress(item); // xử lý chọn item
-                    }}
-                  >
-                    <Text style={styles.dropdownItemText}>{item.name}</Text>
-                  </TouchableOpacity>
-                )}
-              />
-            )}
+        <View style={styles.searchWrapper}>
+          <View style={styles.searchInputContainer}>
+            <Ionicons name="search" size={20} color="#9A9A9A" />
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search products"
+              value={query}
+              onChangeText={setQuery}
+            />
           </View>
 
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-                style={styles.cartIconContainer}
-                onPress={() => navigation.getParent()?.navigate("cart")}
-            >
-              {cartItems.length > 0 && (
-                  <View style={styles.cartItemCountContainer}>
-                    <Text style={styles.cartItemCountText}>{cartItems.length}</Text>
+          {data.length > 0 && (
+            <FlatList
+              style={styles.dropdownList}
+              data={data}
+              keyExtractor={(item) => item.productId.toString()}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={styles.dropdownItem}
+                  onPress={() => {
+                    setQuery(item.productName);
+                    // handleProductPress(item); // xử lý chọn item
+                  }}
+                >
+                  <View style={styles.dropdownItemContent}>
+                    <Image
+                      source={{ uri: item.img }}
+                      style={styles.productImage}
+                    />
+                    <Text style={styles.dropdownItemText}>
+                      {item.productName}
+                    </Text>
                   </View>
+                </TouchableOpacity>
+              )}
+            />
+          )}
+        </View>
+
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.cartIconContainer}>
+              {cartItems.length > 0 && (
+                <View style={styles.cartItemCountContainer}>
+                  <Text style={styles.cartItemCountText}>
+                    {cartItems.length}
+                  </Text>
+                </View>
               )}
               <Image source={cartIcon} />
             </TouchableOpacity>
-
           </View>
         </View>
       <View style={styles.bodyContainer}>
-        <ScrollView  nestedScrollEnabled={true} >
+        <ScrollView nestedScrollEnabled={true}>
           <View style={styles.promotiomSliderContainer}>
             <Carousel
-              width={300}
+              width={355}
               height={200}
               loop
               autoPlay
@@ -281,7 +226,7 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
                       height: 200,
                       borderRadius: 10,
                     }}
-                    resizeMode="contain"
+                    resizeMode="cover"
                   />
                 </TouchableOpacity>
               )}
@@ -292,32 +237,33 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
           </View>
           <View style={styles.categoryContainer}>
             <FlatList
+              horizontal
               showsHorizontalScrollIndicator={false}
-              style={styles.flatListContainer}
-              horizontal={true}
+              contentContainerStyle={styles.flatListContent}
               data={category}
-              keyExtractor={(item) => item.productId}
-              renderItem={({ item, index }) => (
-                <View style={{ marginBottom: 10 }} key={item.productId}>
-                  <CustomIconButton
-                    key={item.productId}
-                    text={item.title}
-                    image={item.image}
-                    onPress={function (): void {
-                      throw new Error("Function not implemented.");
-                    }} // onPress={() =>
-                    //   navigation.jumpTo("categories", { categoryID: item })
-                    // }
+              keyExtractor={(item) => item.cate_ID.toString()}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={styles.categoryItem}
+                  onPress={() => {
+                    // TODO: Điều hướng hoặc xử lý chọn category
+                    console.log("Selected category:", item.name);
+                  }}
+                >
+                  <Image
+                    source={{ uri: item.urlImage }}
+                    style={styles.categoryImage}
                   />
-                </View>
+                  <Text style={styles.categoryName}>{item.name}</Text>
+                </TouchableOpacity>
               )}
             />
-            <View style={styles.emptyView}></View>
           </View>
+
           <View style={styles.primaryTextContainer}>
             <Text style={styles.primaryText}>New Arrivals</Text>
           </View>
-          {products.length === 0 ? (
+          {(products ?? []).length === 0 ? (
             <View style={styles.productCardContainerEmpty}>
               <Text style={styles.productCardContainerEmptyText}>
                 No Product
@@ -335,9 +281,9 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
                 showsHorizontalScrollIndicator={false}
                 initialNumToRender={5}
                 horizontal={true}
-                data={products.slice(0, 4)}
+                data={(products ?? []).slice(0, 4)}
                 keyExtractor={(item) => item.productId.toString()}
-                renderItem={({ item, index }) => (
+                renderItem={({ item }) => (
                   <View
                     key={item.productId}
                     style={{ marginLeft: 5, marginBottom: 10, marginRight: 5 }}
@@ -400,7 +346,7 @@ export const styles = StyleSheet.create({
     width: "100%",
   },
   searchContainer: {
-    top: Platform.OS === "android" ? 55 : 45,
+    top: Platform.OS === "android" ? 55 : 20,
     zIndex: 999,
     flexDirection: "row",
     alignItems: "center",
@@ -408,6 +354,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
     width: "100%",
     backgroundColor: "#fff",
+    marginBottom: 10,
   },
   searchWrapper: {
     flex: 1,
@@ -456,6 +403,19 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     color: "#333",
   },
+  dropdownItemContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+  },
+
+  productImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 6,
+    marginRight: 10,
+  },
   buttonContainer: {
     width: 40,
     height: 40,
@@ -485,12 +445,13 @@ export const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   promotiomSliderContainer: {
-    marginTop: 100, // đảm bảo dưới phần search
+    width: "100%",
+    marginTop: 30, // đảm bảo dưới phần search
     marginHorizontal: 10,
     height: 200,
     borderRadius: 10,
     overflow: "hidden",
-    backgroundColor: "#f9f9f9",
+    // backgroundColor: "black",
   },
   primaryTextContainer: {
     paddingHorizontal: 16,
@@ -502,8 +463,34 @@ export const styles = StyleSheet.create({
     color: "#333",
   },
   categoryContainer: {
-    paddingLeft: 10,
     paddingVertical: 10,
+  },
+  
+  flatListContent: {
+    paddingHorizontal: 10,
+  },
+  
+  categoryItem: {
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 15,
+    width: 100,
+  },
+  
+  categoryImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 10,
+    // borderWidth: 1,
+    // borderColor: "#e0e0e0",
+    resizeMode: "cover",
+    marginBottom: 5,
+  },
+  
+  categoryName: {
+    fontSize: 12,
+    color: "#333",
+    textAlign: "center",
   },
   flatListContainer: {
     height: 60,
@@ -527,5 +514,10 @@ export const styles = StyleSheet.create({
     fontStyle: "italic",
     color: "#999",
     fontWeight: "600",
+  },
+  buttonText: {
+    fontSize: 12,
+    color: colors.muted,
+    fontWeight: "bold",
   },
 });

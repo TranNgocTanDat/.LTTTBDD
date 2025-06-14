@@ -14,6 +14,8 @@ import CartScreen from "@/screens/user/CartScreen";
 import SignupScreen from "../screens/auth/RegisterScreen";
 import ForgetPasswordScreen from "../screens/auth/ForgetPasswordScreen";
 import VerifyUserScreen from "../screens/auth/VerifyUserScreen";
+import ProductDetailScreen from "@/screens/products/ProductDetail";
+import { ProductResponse } from "@/model/Product";
 import OAuth2RedirectScreen from "@/screens/auth/OAuth2RedirectScreen";
 
 // import Splash from "../screens/auth/Splash";
@@ -56,10 +58,10 @@ export type RootStackParamList = {
   viewproduct: undefined;
   editproduct: undefined;
   tab: UserResponse;
-  cart: undefined;
+  cart: { user: UserResponse };
   checkout: undefined;
   orderconfirm: undefined;
-  productdetail: undefined;
+  productdetail: { product: ProductResponse };
   vieworder: undefined;
   vieworderdetails: undefined;
   myorder: undefined;
@@ -99,7 +101,7 @@ const Routes: React.FC = () => {
          <Stack.Screen name="cart" component={CartScreen} />
          <Stack.Screen name="checkout" component={CheckoutScreen} />
         {/* <Stack.Screen name="orderconfirm" component={OrderConfirmScreen} /> */}
-        {/* <Stack.Screen name="productdetail" component={ProductDetailScreen} /> */}
+        <Stack.Screen name="productdetail" component={ProductDetailScreen} />
         {/* <Stack.Screen name="vieworder" component={ViewOrdersScreen} /> */}
         {/* <Stack.Screen name="vieworderdetails" component={ViewOrderDetailScreen} /> */}
         {/* <Stack.Screen name="myorder" component={MyOrderScreen} /> */}

@@ -1,12 +1,11 @@
 import type { APIResponse } from "@/model/APIResponse";
-import type { Category } from "@/model/Category";
+import type { Category, CategoryResponse } from "@/model/Category";
 import api from "./api";
 import type {Product} from "@/model/Product.ts";
 
 export default {
-    getCategories: async () => {
-        const response = await api.get<APIResponse<Category[]>>("/categories");
-        console.log(response);
+    getCategories: async (): Promise<CategoryResponse[]> => {
+        const response = await api.get<APIResponse<CategoryResponse[]>>("/categories");
         return response.result;
     },
 
