@@ -31,6 +31,7 @@ export type TabParamList = {
   categories: { user: UserResponse };
   myorder: { user: UserResponse };
   notification: { user: UserResponse };
+  user: { user: UserResponse };
 };
 
 const Tab = createBottomTabNavigator<TabParamList>();
