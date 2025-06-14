@@ -19,6 +19,8 @@ import { RootStackParamList } from "@/routes/Routers";
 import { UserResponse } from "@/model/User";
 import MyOrderScreen from "@/screens/user/MyOrderScreen";
 import CartScreen from "@/screens/user/CartScreen";
+import UserProfileScreen from "@/screens/profile/UserProfileScreen";
+
 import NotificationScreen from "@/screens/user/NotificationScreen";
 import notificationScreen from "@/screens/user/NotificationScreen";
 import Entypo from '@expo/vector-icons/Entypo';
@@ -29,6 +31,7 @@ export type TabParamList = {
   categories: { user: UserResponse };
   myorder: { user: UserResponse };
   notification: { user: UserResponse };
+  user: { user: UserResponse };
 };
 
 const Tab = createBottomTabNavigator<TabParamList>();
@@ -103,8 +106,8 @@ const Tabs: React.FC<Props> = ({ route }) => {
       <Tab.Screen name="home" component={HomeScreen} initialParams={{ user }} />
       {/* <Tab.Screen name="categories" component={CategoriesScreen} initialParams={{ user }} /> */}
       <Tab.Screen name="myorder" component={CartScreen} initialParams={{ user }} />
+      <Tab.Screen name="user" component={UserProfileScreen} initialParams={{ user }} />
         <Tab.Screen name="notification" component={NotificationScreen} initialParams={{ user }} />
-      {/* <Tab.Screen name="user" component={UserProfileScreen} initialParams={{ user }} /> */}
     </Tab.Navigator>
   );
 };

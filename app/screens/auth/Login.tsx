@@ -34,7 +34,7 @@ const LoginScreen = () => {
       dispatch(loginSuccess({ token: data.token, userResponse: data.userResponse }));
       const roles = data.userResponse.roles;
       if (roles.includes("ADMIN")) {
-        navigation.replace("tab", data.userResponse);
+        // navigation.replace("tab", data.userResponse);
         // navigation.replace("dashboard", { authUser: data.userResponse });
       } else {
         navigation.replace("tab", data.userResponse);
@@ -100,7 +100,7 @@ const LoginScreen = () => {
         <TouchableOpacity
             style={styles.googleButton}
             onPress={() => {
-              const googleUrl = "http://192.168.102.140:8080/api/oauth2/authorization/google";
+              const googleUrl = "https://31b3-42-119-81-92.ngrok-free.app/api/login/oauth2/code/google";
               Linking.openURL(googleUrl);
             }}
         >
