@@ -192,19 +192,17 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
           )}
         </View>
 
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.cartIconContainer}>
-              {cartItems.length > 0 && (
-                <View style={styles.cartItemCountContainer}>
-                  <Text style={styles.cartItemCountText}>
-                    {cartItems.length}
-                  </Text>
-                </View>
-              )}
-              <Image source={cartIcon} />
-            </TouchableOpacity>
-          </View>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.cartIconContainer}>
+            {cartItems.length > 0 && (
+              <View style={styles.cartItemCountContainer}>
+                <Text style={styles.cartItemCountText}>{cartItems.length}</Text>
+              </View>
+            )}
+            <Image source={cartIcon} />
+          </TouchableOpacity>
         </View>
+      </View>
       <View style={styles.bodyContainer}>
         <ScrollView nestedScrollEnabled={true}>
           <View style={styles.promotiomSliderContainer}>
@@ -290,7 +288,50 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
                   >
                     <ProductCard
                       name={item.productName}
-                      image={`${network.serverip}/uploads/${item.img}`}
+                      image={item.img}
+                      price={item.price}
+                      quantity={item.stock}
+                      onPress={() => handleProductPress(item)}
+                      onPressSecondary={() => handleAddToCart(item.productId)}
+                    />
+                  </View>
+                )}
+              />
+              <View style={styles.emptyView}></View>
+            </View>
+          )}
+
+          <View style={styles.primaryTextContainer}>
+            <Text style={styles.primaryText}>New Arrivals</Text>
+          </View>
+          {(products ?? []).length === 0 ? (
+            <View style={styles.productCardContainerEmpty}>
+              <Text style={styles.productCardContainerEmptyText}>
+                No Product
+              </Text>
+            </View>
+          ) : (
+            <View style={styles.productCardContainer}>
+              <FlatList
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refeshing}
+                    onRefresh={handleOnRefresh}
+                  />
+                }
+                showsHorizontalScrollIndicator={false}
+                initialNumToRender={5}
+                horizontal={true}
+                data={(products ?? []).slice(0, 4)}
+                keyExtractor={(item) => item.productId.toString()}
+                renderItem={({ item }) => (
+                  <View
+                    key={item.productId}
+                    style={{ marginLeft: 5, marginBottom: 10, marginRight: 5 }}
+                  >
+                    <ProductCard
+                      name={item.productName}
+                      image={item.img}
                       price={item.price}
                       quantity={item.stock}
                       onPress={() => handleProductPress(item)}
@@ -354,7 +395,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
     width: "100%",
     backgroundColor: "#fff",
-    marginBottom: 10,
+    marginBottom: 30,
   },
   searchWrapper: {
     flex: 1,
@@ -465,18 +506,18 @@ export const styles = StyleSheet.create({
   categoryContainer: {
     paddingVertical: 10,
   },
-  
+
   flatListContent: {
     paddingHorizontal: 10,
   },
-  
+
   categoryItem: {
     alignItems: "center",
     justifyContent: "center",
     marginRight: 15,
     width: 100,
   },
-  
+
   categoryImage: {
     width: 80,
     height: 80,
@@ -486,7 +527,7 @@ export const styles = StyleSheet.create({
     resizeMode: "cover",
     marginBottom: 5,
   },
-  
+
   categoryName: {
     fontSize: 12,
     color: "#333",
@@ -501,7 +542,7 @@ export const styles = StyleSheet.create({
   productCardContainer: {
     paddingLeft: 10,
     paddingBottom: 20,
-    paddingTop: 5,
+    paddingTop: 10,
   },
   productCardContainerEmpty: {
     justifyContent: "center",

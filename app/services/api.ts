@@ -5,7 +5,6 @@ import axios, { AxiosResponse, AxiosRequestConfig } from "axios";
 const DOMAIN = "http://192.168.88.248:8080/api";
 
 
-
 const api = axios.create({
   baseURL: DOMAIN,
 });

@@ -19,6 +19,7 @@ import { RootStackParamList } from "@/routes/Routers";
 import { UserResponse } from "@/model/User";
 import MyOrderScreen from "@/screens/user/MyOrderScreen";
 import CartScreen from "@/screens/user/CartScreen";
+import UserProfileScreen from "@/screens/profile/UserProfileScreen";
 
 type Props = NativeStackScreenProps<RootStackParamList, "tab">;
 
@@ -97,7 +98,7 @@ const Tabs: React.FC<Props> = ({ route }) => {
       <Tab.Screen name="home" component={HomeScreen} initialParams={{ user }} />
       {/* <Tab.Screen name="categories" component={CategoriesScreen} initialParams={{ user }} /> */}
       <Tab.Screen name="myorder" component={CartScreen} initialParams={{ user }} />
-      {/* <Tab.Screen name="user" component={UserProfileScreen} initialParams={{ user }} /> */}
+      <Tab.Screen name="user" component={UserProfileScreen} initialParams={{ user }} />
     </Tab.Navigator>
   );
 };
@@ -106,7 +107,7 @@ export default Tabs;
 
 const styles = StyleSheet.create({
   tabIconStyle: {
-    width: 10,
-    height: 10,
+    width: 20,
+    height: 20,
   },
 });

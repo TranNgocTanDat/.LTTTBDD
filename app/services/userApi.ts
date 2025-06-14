@@ -5,6 +5,7 @@ import type {
   UserUpdateRequest,
 } from "@/model/User";
 import type { APIResponse } from "@/model/APIResponse";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 export default {
@@ -25,7 +26,7 @@ export default {
   },
 
   getMyInfo: async (): Promise<UserResponse> => {
-    const token = localStorage.getItem("token");  // Lấy token từ localStorage
+    const token = await AsyncStorage.getItem("authUser");
 
     const response = await api.get<APIResponse<UserResponse>>(`/users/myInfo`, {
       headers: {
