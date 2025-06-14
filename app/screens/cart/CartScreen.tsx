@@ -29,7 +29,6 @@ const CartScreen = ({ navigation }: any) => {
         (state: any) => state.calculateCartPrice
     );
 
-    const tabBarHeight = useBottomTabBarHeight();
 
     useEffect(() => {
         calculateCartPrice();
@@ -71,7 +70,7 @@ const CartScreen = ({ navigation }: any) => {
 
             <ScrollView
                 showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ paddingBottom: tabBarHeight }}
+                contentContainerStyle={{ paddingBottom: 80 }}
                 style={styles.bodyContainer}
             >
                 {CartList.length === 0 ? (
