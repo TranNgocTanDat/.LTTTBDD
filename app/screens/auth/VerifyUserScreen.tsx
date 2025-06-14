@@ -16,7 +16,7 @@ import authApi from "../../services/authApi";
 type Props = NativeStackScreenProps<RootStackParamList, "verify">;
 
 const VerifyUserScreen: React.FC<Props> = ({ navigation, route }) => {
-    const [code, setCode] = useState("");
+    const [verificationCode, setCode] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const { email } = route.params;
@@ -38,12 +38,12 @@ const VerifyUserScreen: React.FC<Props> = ({ navigation, route }) => {
     });
 
     const handleSubmit = () => {
-        if (!code.trim()) {
+        if (!verificationCode.trim()) {
             Alert.alert("Lỗi", "Vui lòng nhập mã xác thực.");
             return;
         }
         setIsSubmitting(true);
-        mutation.mutate({ email, code });
+        mutation.mutate({ email, verificationCode });
     };
 
     return (
@@ -57,7 +57,7 @@ const VerifyUserScreen: React.FC<Props> = ({ navigation, route }) => {
                 style={styles.input}
                 placeholder="Nhập mã xác thực"
                 keyboardType="numeric"
-                value={code}
+                value={verificationCode}
                 onChangeText={setCode}
                 autoCapitalize="none"
             />
