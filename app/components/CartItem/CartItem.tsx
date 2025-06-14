@@ -1,4 +1,5 @@
 import React from 'react';
+
 import {
     StyleSheet,
     Text,
@@ -21,7 +22,7 @@ import { Ionicons } from '@expo/vector-icons';
 interface CartItemProps {
     id: string;
     name: string;
-    imagelink_square: ImageProps;
+    image: ImageProps;
     special_ingredient: string;
     roasted: string;
     prices: {
@@ -39,7 +40,7 @@ interface CartItemProps {
 const CartItem: React.FC<CartItemProps> = ({
                                                id,
                                                name,
-                                               imagelink_square,
+                                               image,
                                                special_ingredient,
                                                roasted,
                                                prices,
@@ -57,7 +58,7 @@ const CartItem: React.FC<CartItemProps> = ({
                     colors={[COLORS.primaryGreyHex, COLORS.primaryBlackHex]}
                     style={styles.CartItemLinearGradient}>
                     <View style={styles.CartItemRow}>
-                        <Image source={imagelink_square} style={styles.CartItemImage} />
+                        <Image source={image} style={styles.CartItemImage} />
                         <View style={styles.CartItemInfo}>
                             <View>
                                 <Text style={styles.CartItemTitle}>{name}</Text>
@@ -120,7 +121,7 @@ const CartItem: React.FC<CartItemProps> = ({
                     colors={[COLORS.primaryGreyHex, COLORS.primaryBlackHex]}
                     style={styles.CartItemSingleLinearGradient}>
                     <View>
-                        <Image source={imagelink_square} style={styles.CartItemSingleImage} />
+                        <Image source={image} style={styles.CartItemSingleImage} />
                     </View>
                     <View style={styles.CartItemSingleInfoContainer}>
                         <View>

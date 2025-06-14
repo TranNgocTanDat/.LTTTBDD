@@ -7,11 +7,9 @@ import {
     ScrollView,
     TouchableOpacity,
 } from "react-native";
-import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import { useStore } from "../../store/store";
 import { COLORS, SPACING } from "../../theme/theme";
-import HeaderBar from "../../components/HeaderBar/HeaderBar";
 import EmptyListAnimation from "../../components/EmtyListAnimation/EmtyListAnimation";
 import CartItem from "../../components/CartItem/CartItem";
 import PaymentFooter from "../../components/PaymentFooter/PaymentFooter";
@@ -29,17 +27,19 @@ const CartScreen = ({ navigation }: any) => {
         (state: any) => state.calculateCartPrice
     );
     const removeFromCart = useStore((state: any) => state.removeFromCart);
-
     const addToCart = useStore((state: any) => state.addToCart);
+
+    const handlePayment = () => {
+        navigation.push("checkout", { amount: CartPrice });
+    };
+
     useEffect(() => {
         if (CartList.length === 0) {
             addToCart({
                 id: "1",
                 name: "Espresso",
-                prices: [
-                    { size: "S", price: "3.00", quantity: 1 },
-                ],
-                imagelink_square: "https://via.placeholder.com/100",
+                prices: [{ size: "S", price: "3000", quantity: 1 }],
+                image: require("../../assets/image/cangu.jpg"),
                 special_ingredient: "Arabica",
                 roasted: "Medium",
                 type: "Coffee",
@@ -49,10 +49,8 @@ const CartScreen = ({ navigation }: any) => {
             addToCart({
                 id: "2",
                 name: "Latte",
-                prices: [
-                    { size: "M", price: "4.50", quantity: 2 },
-                ],
-                imagelink_square: "https://via.placeholder.com/100",
+                prices: [{ size: "M", price: "4500", quantity: 2 }],
+                image: require('../../assets/image/tom.jpg'),
                 special_ingredient: "Milk",
                 roasted: "Light",
                 type: "Coffee",
@@ -61,12 +59,10 @@ const CartScreen = ({ navigation }: any) => {
         }
     }, []);
 
-
     const removeHandler = (id: string, size: string) => {
         removeFromCart(id, size);
         calculateCartPrice();
     };
-
 
     useEffect(() => {
         calculateCartPrice();
@@ -80,10 +76,6 @@ const CartScreen = ({ navigation }: any) => {
     const decrementHandler = (id: string, size: string) => {
         decrementCartItemQuantity(id, size);
         calculateCartPrice();
-    };
-
-    const handlePayment = () => {
-        navigation.push("Payment", { amount: CartPrice });
     };
 
     return (
@@ -100,9 +92,9 @@ const CartScreen = ({ navigation }: any) => {
             </View>
 
             <View style={styles.screenNameContainer}>
-                <Text style={styles.screenNameText}>My Cart</Text>
+                <Text style={styles.screenNameText}>Giỏ hàng</Text>
                 <Text style={styles.screenNameParagraph}>
-                    Review your items before payment
+                    Kiểm tra lại sản phẩm trước khi thanh toán
                 </Text>
             </View>
 
@@ -112,13 +104,11 @@ const CartScreen = ({ navigation }: any) => {
                 style={styles.bodyContainer}
             >
                 {CartList.length === 0 ? (
-                    <EmptyListAnimation title={"Cart is Empty"} />
+                    <EmptyListAnimation title={"Giỏ hàng trống"} />
                 ) : (
                     <View style={styles.cartItemsContainer}>
                         {CartList.map((item: any) => (
-                            <TouchableOpacity
-                                key={item.id}
-                            >
+                            <TouchableOpacity key={item.id}>
                                 <CartItem
                                     {...item}
                                     incrementCartItemQuantityHandler={incrementHandler}
@@ -128,10 +118,6 @@ const CartScreen = ({ navigation }: any) => {
                             </TouchableOpacity>
                         ))}
 
-                        <View style={styles.totalContainer}>
-                            <Text style={styles.totalText}>Total</Text>
-                            <Text style={styles.totalAmount}>{CartPrice}$</Text>
-                        </View>
                     </View>
                 )}
             </ScrollView>
@@ -139,8 +125,8 @@ const CartScreen = ({ navigation }: any) => {
             {CartList.length > 0 && (
                 <PaymentFooter
                     buttonPressHandler={handlePayment}
-                    buttonTitle="Pay"
-                    price={{ price: CartPrice, currency: "$" }}
+                    buttonTitle="Thanh toán"
+                    price={{ price: CartPrice, currency: "₫" }}
                 />
             )}
         </View>
@@ -155,7 +141,7 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.secondaryLightGreyHex,
         paddingHorizontal: SPACING.space_20,
         paddingTop: 50,
-        paddingBottom: 150,
+        paddingBottom: 80,
     },
     TopBarContainer: {
         flexDirection: "row",
@@ -204,4 +190,3 @@ const styles = StyleSheet.create({
         margin: 10,
     },
 });
-
