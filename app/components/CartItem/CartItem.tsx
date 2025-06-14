@@ -7,7 +7,8 @@ import {
     Image,
     TouchableOpacity,
 } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
+import { LinearGradient } from 'expo-linear-gradient';
+
 import {
     BORDERRADIUS,
     COLORS,
@@ -15,7 +16,7 @@ import {
     FONTSIZE,
     SPACING,
 } from '../../theme/theme';
-import CustomIcon from '../../assets/icons/bar_home_icon.png';
+import { Ionicons } from '@expo/vector-icons';
 
 interface CartItemProps {
     id: string;
@@ -23,10 +24,16 @@ interface CartItemProps {
     imagelink_square: ImageProps;
     special_ingredient: string;
     roasted: string;
-    prices: any;
+    prices: {
+        size: string;
+        price: number;
+        quantity: number;
+        currency: string;
+    }[];
     type: string;
-    incrementCartItemQuantityHandler: any;
-    decrementCartItemQuantityHandler: any;
+    incrementCartItemQuantityHandler: (id: string, size: string) => void;
+    decrementCartItemQuantityHandler: (id: string, size: string) => void;
+    removeFromCartHandler: (id: string, size: string) => void;
 }
 
 const CartItem: React.FC<CartItemProps> = ({
@@ -39,13 +46,14 @@ const CartItem: React.FC<CartItemProps> = ({
                                                type,
                                                incrementCartItemQuantityHandler,
                                                decrementCartItemQuantityHandler,
+                                               removeFromCartHandler,
                                            }) => {
     return (
         <View>
-            {prices.length != 1 ? (
+            {prices.length !== 1 ? (
                 <LinearGradient
-                    start={{x: 0, y: 0}}
-                    end={{x: 1, y: 1}}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
                     colors={[COLORS.primaryGreyHex, COLORS.primaryBlackHex]}
                     style={styles.CartItemLinearGradient}>
                     <View style={styles.CartItemRow}>
@@ -53,16 +61,14 @@ const CartItem: React.FC<CartItemProps> = ({
                         <View style={styles.CartItemInfo}>
                             <View>
                                 <Text style={styles.CartItemTitle}>{name}</Text>
-                                <Text style={styles.CartItemSubtitle}>
-                                    {special_ingredient}
-                                </Text>
+                                <Text style={styles.CartItemSubtitle}>{special_ingredient}</Text>
                             </View>
                             <View style={styles.CartItemRoastedContainer}>
                                 <Text style={styles.CartItemRoastedText}>{roasted}</Text>
                             </View>
                         </View>
                     </View>
-                    {prices.map((data: any, index: any) => (
+                    {prices.map((data, index) => (
                         <View
                             key={index.toString()}
                             style={styles.CartItemSizeRowContainer}>
@@ -73,7 +79,7 @@ const CartItem: React.FC<CartItemProps> = ({
                                             styles.SizeText,
                                             {
                                                 fontSize:
-                                                    type == 'Bean' ? FONTSIZE.size_12 : FONTSIZE.size_16,
+                                                    type === 'Bean' ? FONTSIZE.size_12 : FONTSIZE.size_16,
                                             },
                                         ]}>
                                         {data.size}
@@ -87,30 +93,21 @@ const CartItem: React.FC<CartItemProps> = ({
                             <View style={styles.CartItemSizeValueContainer}>
                                 <TouchableOpacity
                                     style={styles.CartItemIcon}
-                                    onPress={() => {
-                                        decrementCartItemQuantityHandler(id, data.size);
-                                    }}>
-                                    <CustomIcon
-                                        name="minus"
-                                        color={COLORS.primaryWhiteHex}
-                                        size={FONTSIZE.size_10}
-                                    />
+                                    onPress={() => decrementCartItemQuantityHandler(id, data.size)}>
+                                    <Ionicons name="remove" size={FONTSIZE.size_16} color={COLORS.primaryWhiteHex} />
                                 </TouchableOpacity>
                                 <View style={styles.CartItemQuantityContainer}>
-                                    <Text style={styles.CartItemQuantityText}>
-                                        {data.quantity}
-                                    </Text>
+                                    <Text style={styles.CartItemQuantityText}>{data.quantity}</Text>
                                 </View>
                                 <TouchableOpacity
                                     style={styles.CartItemIcon}
-                                    onPress={() => {
-                                        incrementCartItemQuantityHandler(id, data.size);
-                                    }}>
-                                    <CustomIcon
-                                        name="add"
-                                        color={COLORS.primaryWhiteHex}
-                                        size={FONTSIZE.size_10}
-                                    />
+                                    onPress={() => incrementCartItemQuantityHandler(id, data.size)}>
+                                    <Ionicons name="add" size={FONTSIZE.size_16} color={COLORS.primaryWhiteHex} />
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={styles.CartItemIcon}
+                                    onPress={() => removeFromCartHandler(id, data.size)}>
+                                    <Ionicons name="trash-bin" size={18} color={COLORS.primaryWhiteHex} />
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -118,15 +115,12 @@ const CartItem: React.FC<CartItemProps> = ({
                 </LinearGradient>
             ) : (
                 <LinearGradient
-                    start={{x: 0, y: 0}}
-                    end={{x: 1, y: 1}}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
                     colors={[COLORS.primaryGreyHex, COLORS.primaryBlackHex]}
                     style={styles.CartItemSingleLinearGradient}>
                     <View>
-                        <Image
-                            source={imagelink_square}
-                            style={styles.CartItemSingleImage}
-                        />
+                        <Image source={imagelink_square} style={styles.CartItemSingleImage} />
                     </View>
                     <View style={styles.CartItemSingleInfoContainer}>
                         <View>
@@ -140,7 +134,7 @@ const CartItem: React.FC<CartItemProps> = ({
                                         styles.SizeText,
                                         {
                                             fontSize:
-                                                type == 'Bean' ? FONTSIZE.size_12 : FONTSIZE.size_16,
+                                                type === 'Bean' ? FONTSIZE.size_12 : FONTSIZE.size_16,
                                         },
                                     ]}>
                                     {prices[0].size}
@@ -154,14 +148,10 @@ const CartItem: React.FC<CartItemProps> = ({
                         <View style={styles.CartItemSingleQuantityContainer}>
                             <TouchableOpacity
                                 style={styles.CartItemIcon}
-                                onPress={() => {
-                                    decrementCartItemQuantityHandler(id, prices[0].size);
-                                }}>
-                                <CustomIcon
-                                    name="minus"
-                                    color={COLORS.primaryWhiteHex}
-                                    size={FONTSIZE.size_10}
-                                />
+                                onPress={() =>
+                                    decrementCartItemQuantityHandler(id, prices[0].size)
+                                }>
+                                <Ionicons name="remove" size={FONTSIZE.size_16} color={COLORS.primaryWhiteHex} />
                             </TouchableOpacity>
                             <View style={styles.CartItemQuantityContainer}>
                                 <Text style={styles.CartItemQuantityText}>
@@ -170,14 +160,17 @@ const CartItem: React.FC<CartItemProps> = ({
                             </View>
                             <TouchableOpacity
                                 style={styles.CartItemIcon}
-                                onPress={() => {
-                                    incrementCartItemQuantityHandler(id, prices[0].size);
-                                }}>
-                                <CustomIcon
-                                    name="add"
-                                    color={COLORS.primaryWhiteHex}
-                                    size={FONTSIZE.size_10}
-                                />
+                                onPress={() =>
+                                    incrementCartItemQuantityHandler(id, prices[0].size)
+                                }>
+                                <Ionicons name="add" size={FONTSIZE.size_16} color={COLORS.primaryWhiteHex} />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={styles.CartItemIcon}
+                                onPress={() =>
+                                    removeFromCartHandler(id, prices[0].size)
+                                }>
+                                <Ionicons name="trash-bin" size={18} color={COLORS.primaryWhiteHex} />
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -186,6 +179,9 @@ const CartItem: React.FC<CartItemProps> = ({
         </View>
     );
 };
+
+
+
 
 const styles = StyleSheet.create({
     CartItemLinearGradient: {
@@ -200,8 +196,8 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     CartItemImage: {
-        height: 130,
-        width: 130,
+        height: 110,
+        width: 110,
         borderRadius: BORDERRADIUS.radius_20,
     },
     CartItemInfo: {
@@ -244,11 +240,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flexDirection: 'row',
         justifyContent: 'space-between',
+
+
     },
     SizeBox: {
         backgroundColor: COLORS.primaryBlackHex,
         height: 40,
-        width: 100,
+        width: 130,
         borderRadius: BORDERRADIUS.radius_10,
         justifyContent: 'center',
         alignItems: 'center',
@@ -267,8 +265,9 @@ const styles = StyleSheet.create({
     },
     CartItemIcon: {
         backgroundColor: COLORS.primaryOrangeHex,
-        padding: SPACING.space_12,
+         padding: SPACING.space_8,
         borderRadius: BORDERRADIUS.radius_10,
+
     },
     CartItemQuantityContainer: {
         backgroundColor: COLORS.primaryBlackHex,
