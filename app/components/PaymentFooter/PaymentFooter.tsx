@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingVertical: SPACING.space_20,
         paddingHorizontal: SPACING.space_20,
-        backgroundColor: COLORS.secondaryLightGreyHex,
+        backgroundColor: "#ffffff",
         borderTopWidth: 1,
         borderTopColor: COLORS.primaryGreyHex,
     },

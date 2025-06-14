@@ -21,13 +21,16 @@ import MyOrderScreen from "@/screens/user/MyOrderScreen";
 import CartScreen from "@/screens/user/CartScreen";
 import UserProfileScreen from "@/screens/profile/UserProfileScreen";
 
+import NotificationScreen from "@/screens/user/NotificationScreen";
+import notificationScreen from "@/screens/user/NotificationScreen";
+import Entypo from '@expo/vector-icons/Entypo';
 type Props = NativeStackScreenProps<RootStackParamList, "tab">;
 
 export type TabParamList = {
   home: { user: UserResponse };
   categories: { user: UserResponse };
   myorder: { user: UserResponse };
-  user: { user: UserResponse };
+  notification: { user: UserResponse };
 };
 
 const Tab = createBottomTabNavigator<TabParamList>();
@@ -55,10 +58,12 @@ const Tabs: React.FC<Props> = ({ route }) => {
           if (routeName === "home") {
             return (
               <TouchableOpacity disabled>
-                <Image
-                  source={focused ? HomeIconActive : HomeIcon}
-                  style={styles.tabIconStyle}
-                />
+                  <Entypo
+                      name="home"
+                      size={24}
+                      color={focused ? colors.primary : colors.muted}
+                  />
+
               </TouchableOpacity>
             );
           } else if (routeName === "categories") {
@@ -81,13 +86,15 @@ const Tabs: React.FC<Props> = ({ route }) => {
                 />
               </TouchableOpacity>
             );
-          } else if (routeName === "user") {
+          } else if (routeName === "notification") {
             return (
               <TouchableOpacity disabled>
-                <Image
-                  source={focused ? userIconActive : userIcon}
-                  style={styles.tabIconStyle}
-                />
+                  <Ionicons
+                      name="notifications"
+                      size={24}
+                      color={focused ? colors.primary : colors.muted}
+                  />
+
               </TouchableOpacity>
             );
           }
@@ -99,6 +106,7 @@ const Tabs: React.FC<Props> = ({ route }) => {
       {/* <Tab.Screen name="categories" component={CategoriesScreen} initialParams={{ user }} /> */}
       <Tab.Screen name="myorder" component={CartScreen} initialParams={{ user }} />
       <Tab.Screen name="user" component={UserProfileScreen} initialParams={{ user }} />
+        <Tab.Screen name="notification" component={NotificationScreen} initialParams={{ user }} />
     </Tab.Navigator>
   );
 };
@@ -107,7 +115,7 @@ export default Tabs;
 
 const styles = StyleSheet.create({
   tabIconStyle: {
-    width: 20,
-    height: 20,
+      width: 10,
+      height: 10,
   },
 });

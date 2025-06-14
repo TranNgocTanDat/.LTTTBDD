@@ -29,6 +29,7 @@ import OAuth2RedirectScreen from "@/screens/auth/OAuth2RedirectScreen";
 // import CartScreen from "../screens/user/CartScreen";
 import CheckoutScreen from "../screens/user/CheckoutScreen";
 import HomeScreen from "../screens/HomeScreen";
+import NotificationScreen from "@/screens/user/NotificationScreen";
 // import OrderConfirmScreen from "../screens/user/OrderConfirmScreen";
 // import ProductDetailScreen from "../screens/user/ProductDetailScreen";
 // import EditProductScreen from "../screens/admin/EditProductScreen";
@@ -74,6 +75,7 @@ export type RootStackParamList = {
   editcategories: undefined;
   viewusers: undefined;
   categories: undefined;
+  notification: undefined;
   
 };
 
@@ -110,7 +112,7 @@ const Routes: React.FC = () => {
         {/* <Stack.Screen name="addcategories" component={AddCategoryScreen} /> */}
         {/* <Stack.Screen name="editcategories" component={EditCategoryScreen} /> */}
         {/* <Stack.Screen name="viewusers" component={ViewUsersScreen} /> */}
-        {/* <Stack.Screen name="categories" component={CategoriesScreen} /> */}
+         <Stack.Screen name="notification" component={NotificationScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -118,7 +118,7 @@ const CartItem: React.FC<CartItemProps> = ({
                 <LinearGradient
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
-                    colors={[COLORS.primaryGreyHex, COLORS.primaryBlackHex]}
+                    colors={["#c5c5c5","#404040",]}
                     style={styles.CartItemSingleLinearGradient}>
                     <View>
                         <Image source={image} style={styles.CartItemSingleImage} />
@@ -209,12 +209,12 @@ const styles = StyleSheet.create({
     CartItemTitle: {
         fontFamily: FONTFAMILY.poppins_medium,
         fontSize: FONTSIZE.size_18,
-        color: COLORS.primaryWhiteHex,
+        color: "#ffffff",
     },
     CartItemSubtitle: {
         fontFamily: FONTFAMILY.poppins_regular,
         fontSize: FONTSIZE.size_12,
-        color: COLORS.secondaryLightGreyHex,
+        color: "#ffffff",
     },
     CartItemRoastedContainer: {
         height: 50,
@@ -222,12 +222,12 @@ const styles = StyleSheet.create({
         borderRadius: BORDERRADIUS.radius_15,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: COLORS.primaryDarkGreyHex,
+        backgroundColor: "#000000",
     },
     CartItemRoastedText: {
         fontFamily: FONTFAMILY.poppins_regular,
         fontSize: FONTSIZE.size_10,
-        color: COLORS.primaryWhiteHex,
+        color: "#000000",
     },
     CartItemSizeRowContainer: {
         flex: 1,
@@ -241,7 +241,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flexDirection: 'row',
         justifyContent: 'space-between',
-
 
     },
     SizeBox: {
