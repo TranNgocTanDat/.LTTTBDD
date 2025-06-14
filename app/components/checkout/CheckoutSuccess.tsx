@@ -1,13 +1,24 @@
-
-import {StyleSheet, Text, View,TouchableOpacity} from 'react-native';
-import React from 'react';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import LottieView from 'lottie-react-native';
-import {COLORS, FONTFAMILY, FONTSIZE} from '../../theme/theme';
+import { COLORS, FONTFAMILY, FONTSIZE } from '../../theme/theme';
+
 interface CheckoutSuccessProps {
     title: string;
+    onPress: () => void;
 }
 
-const CheckoutSuccess = ({ title, onPress }: { title: string; onPress: () => void }) => {
+const CheckoutSuccess: React.FC<CheckoutSuccessProps> = ({ title, onPress }) => {
+    const [showTextAndButton, setShowTextAndButton] = useState(false);
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            setShowTextAndButton(true);
+        }, 2000); // 1s delay
+
+        return () => clearTimeout(timeout); // cleanup
+    }, []);
+
     return (
         <View style={styles.EmptyCartContainer}>
             <LottieView
@@ -16,10 +27,14 @@ const CheckoutSuccess = ({ title, onPress }: { title: string; onPress: () => voi
                 autoPlay
                 loop
             />
-            <Text style={styles.LottieText}>{title}</Text>
-            <TouchableOpacity style={styles.button} onPress={onPress}>
-                <Text style={styles.buttonText}>Quay lại</Text>
-            </TouchableOpacity>
+            {showTextAndButton && (
+                <>
+                    <Text style={styles.LottieText}>{title}</Text>
+                    <TouchableOpacity style={styles.button} onPress={onPress}>
+                        <Text style={styles.buttonText}>Quay lại</Text>
+                    </TouchableOpacity>
+                </>
+            )}
         </View>
     );
 };
@@ -28,7 +43,7 @@ const styles = StyleSheet.create({
     EmptyCartContainer: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center', // Thêm dòng này để canh giữa ngang
+        alignItems: 'center',
         backgroundColor: '#fff',
         paddingHorizontal: 24,
     },
@@ -48,7 +63,7 @@ const styles = StyleSheet.create({
         paddingVertical: 12,
         paddingHorizontal: 32,
         borderRadius: 8,
-        alignSelf: 'center', // đảm bảo canh giữa nếu parent không align
+        alignSelf: 'center',
     },
     buttonText: {
         color: '#ffffff',
@@ -56,6 +71,5 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
 });
-
 
 export default CheckoutSuccess;

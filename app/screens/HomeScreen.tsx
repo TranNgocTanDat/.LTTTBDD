@@ -304,6 +304,7 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
           )}
         </ScrollView>
       </View>
+
     </SafeAreaView>
   );
 };
