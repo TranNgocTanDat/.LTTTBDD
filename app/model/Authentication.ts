@@ -13,5 +13,5 @@ export interface AuthenticationResponse {
 
 export interface VerifyUserRequest {
   email: string;
-  code: string;
+  verificationCode: string;
 }

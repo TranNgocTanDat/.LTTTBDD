@@ -7,7 +7,7 @@ import {
   StyleSheet,
   Image,
   ActivityIndicator,
-  Alert,
+  Alert, Linking,
 } from "react-native";
 import { useMutation } from "@tanstack/react-query";
 import { useDispatch } from "react-redux";
@@ -100,8 +100,8 @@ const LoginScreen = () => {
         <TouchableOpacity
             style={styles.googleButton}
             onPress={() => {
-              // Cần tích hợp Google OAuth thực tế nếu dùng
-              const googleUrl = "http://localhost:8080/api/oauth2/authorization/google";
+              const googleUrl = "http://192.168.102.140:8080/api/oauth2/authorization/google";
+              Linking.openURL(googleUrl);
             }}
         >
           <Image

@@ -14,6 +14,7 @@ import CartScreen from "@/screens/cart/CartScreen";
 import SignupScreen from "../screens/auth/RegisterScreen";
 import ForgetPasswordScreen from "../screens/auth/ForgetPasswordScreen";
 import VerifyUserScreen from "../screens/auth/VerifyUserScreen";
+import OAuth2RedirectScreen from "@/screens/auth/OAuth2RedirectScreen";
 
 // import Splash from "../screens/auth/Splash";
 
@@ -44,6 +45,7 @@ export type RootStackParamList = {
   login: undefined;
   signup: undefined;
   verify :{ email: string };
+  oauth2redirect: { token: string };
   forgetpassword: undefined;
   updatepassword: undefined;
   myaccount: undefined;
@@ -83,6 +85,7 @@ const Routes: React.FC = () => {
         <Stack.Screen name="signup" component={SignupScreen} />
         <Stack.Screen name="forgetpassword" component={ForgetPasswordScreen} />
           <Stack.Screen name="verify" component={VerifyUserScreen} />
+        <Stack.Screen name="oauth2redirect" component={OAuth2RedirectScreen} />
         {/* <Stack.Screen name="updatepassword" component={UpdatePasswordScreen} /> */}
         {/* <Stack.Screen name="myaccount" component={MyAccountScreen} /> */}
         {/* <Stack.Screen name="mywishlist" component={MyWishlistScreen} /> */}
