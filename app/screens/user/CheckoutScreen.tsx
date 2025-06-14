@@ -93,7 +93,7 @@ const CheckoutScreen = () => {
                     <Ionicons
                         name="arrow-back-circle-outline"
                         size={30}
-                        color={COLORS.primaryWhiteHex}
+                        color={COLORS.primaryBlackHex}
                     />
                 </TouchableOpacity>
             </View>
@@ -191,7 +191,7 @@ export default CheckoutScreen;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: COLORS.secondaryLightGreyHex,
+        backgroundColor: "#ffffff",
         padding: SPACING.space_30,
         paddingTop: 50,
     },
