@@ -7,7 +7,7 @@ import { UserResponse } from "@/model/User";
 import Splash from "@/screens/Splash";
 import MyOrderDetailScreen, { Order } from "@/screens/user/MyOrderDetailScreen";
 
-import CartScreen from "@/screens/cart/CartScreen";
+import CartScreen from "@/screens/user/CartScreen";
 
 // import SignupScreen from "../screens/auth/SignupScreen";
 
@@ -25,7 +25,8 @@ import OAuth2RedirectScreen from "@/screens/auth/OAuth2RedirectScreen";
 // import ViewProductScreen from "../screens/admin/ViewProductScreen";
 // import Tabs from "./tabs/Tabs";
 // import CartScreen from "../screens/user/CartScreen";
-// import CheckoutScreen from "../screens/user/CheckoutScreen";
+import CheckoutScreen from "../screens/user/CheckoutScreen";
+import HomeScreen from "../screens/HomeScreen";
 // import OrderConfirmScreen from "../screens/user/OrderConfirmScreen";
 // import ProductDetailScreen from "../screens/user/ProductDetailScreen";
 // import EditProductScreen from "../screens/admin/EditProductScreen";
@@ -81,6 +82,7 @@ const Routes: React.FC = () => {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="splash" screenOptions={{ headerShown: false }}>
         <Stack.Screen name="splash" component={Splash} />
+
         <Stack.Screen name="login" component={LoginScreen} />
         <Stack.Screen name="signup" component={SignupScreen} />
         <Stack.Screen name="forgetpassword" component={ForgetPasswordScreen} />
@@ -95,7 +97,7 @@ const Routes: React.FC = () => {
         {/* <Stack.Screen name="editproduct" component={EditProductScreen} /> */}
         <Stack.Screen name="tab" component={Tabs} />
          <Stack.Screen name="cart" component={CartScreen} />
-        {/* <Stack.Screen name="checkout" component={CheckoutScreen} /> */}
+         <Stack.Screen name="checkout" component={CheckoutScreen} />
         {/* <Stack.Screen name="orderconfirm" component={OrderConfirmScreen} /> */}
         {/* <Stack.Screen name="productdetail" component={ProductDetailScreen} /> */}
         {/* <Stack.Screen name="vieworder" component={ViewOrdersScreen} /> */}
