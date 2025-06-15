@@ -14,11 +14,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { COLORS, SPACING } from '../../theme/theme';
 import { useStore } from '../../store/store';
-
-
+import Entypo from '@expo/vector-icons/Entypo';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import CheckoutSuccess from "@/components/checkout/CheckoutSuccess";
 
-const paymentMethods = ['Thanh toán khi nhận hàng', 'Thẻ tín dụng', 'MoMo'];
+const paymentMethods = ['Thanh toán khi nhận hàng', 'Thẻ tín dụng' , 'MoMo'];
 
 const CheckoutScreen = () => {
     const navigation = useNavigation();
@@ -152,18 +152,38 @@ const CheckoutScreen = () => {
                     ]}
                     onPress={() => setSelectedPayment(method)}
                 >
-                    <Text
-                        style={{
-                            color:
-                                selectedPayment === method
-                                    ? COLORS.primaryWhiteHex
-                                    : COLORS.primaryBlackHex,
-                        }}
-                    >
-                        {method}
-                    </Text>
+                    <View style={styles.paymentRow}>
+                        {method === 'Thẻ tín dụng' && (
+                            <Entypo
+                                name="credit-card"
+                                size={20}
+                                color={selectedPayment === method ? COLORS.primaryWhiteHex : COLORS.primaryBlackHex}
+                                style={{ marginRight: 10 }}
+                            />
+                        )}
+                        {method === 'Thanh toán khi nhận hàng' && (
+                            <MaterialCommunityIcons
+                                name="cash"
+                                size={22}
+                                color={selectedPayment === method ? COLORS.primaryWhiteHex : COLORS.primaryBlackHex}
+                                style={{ marginRight: 10 }}
+                            />
+                        )}
+                        <Text
+                            style={{
+                                color:
+                                    selectedPayment === method
+                                        ? COLORS.primaryWhiteHex
+                                        : COLORS.primaryBlackHex,
+                            }}
+                        >
+                            {method}
+                        </Text>
+                    </View>
                 </TouchableOpacity>
             ))}
+
+
 
             <View style={styles.totalContainer}>
                 <Text style={styles.totalText}>Tổng cộng:</Text>
@@ -206,6 +226,11 @@ const styles = StyleSheet.create({
         color: COLORS.primaryBlackHex,
         marginBottom: SPACING.space_20,
     },
+    paymentRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+
     sectionTitle: {
         fontSize: 18,
         fontWeight: '600',
