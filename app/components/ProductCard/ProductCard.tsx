@@ -8,8 +8,11 @@ import {
   GestureResponderEvent,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { ProductResponse } from "../../model/Product";
 
 interface ProductCardProps {
+  product: ProductResponse;
+
   name: string;
   price: number;
   image: string;
@@ -18,7 +21,13 @@ interface ProductCardProps {
   onPressSecondary: (event: GestureResponderEvent) => void;
 }
 
+// Cắt chuỗi an toàn
+const truncate = (str: string, maxLength: number) => {
+  return str?.length > maxLength ? str.substring(0, maxLength) + "..." : str;
+};
+
 const ProductCard: React.FC<ProductCardProps> = ({
+
   name,
   price,
   image,
@@ -75,6 +84,7 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 3,
   },
+
   imageWrapper: {
     position: "absolute",
     top: -20,
@@ -108,6 +118,7 @@ const styles = StyleSheet.create({
     width: "80%",
     alignItems: "center",
   },
+
   weight: {
     fontSize: 12,
     color: "#888",

@@ -1,6 +1,7 @@
 import type { APIResponse } from "@/model/APIResponse";
 import type { Product, ProductRequest, ProductResponse } from "@/model/Product";
 import api from "./api";
+import {Category} from "@/model/Category";
 
 export default {
     // Lấy tất cả sản phẩm
@@ -34,9 +35,9 @@ export default {
 
     // Lấy sản phẩm theo categoryId (theo đúng endpoint backend)
     getProductsByCategory: async (categoryId: number): Promise<Product[]> => {
-        const response = await api.get<APIResponse<Product[]>>(`categories/${categoryId}`);
-
-        return response.result;
+        const response = await api.get<APIResponse<Category>>(`categories/${categoryId}`);
+        console.log("Category data received:", response.result); // debug
+        return response.result.productList;
     },
 
     // Tạo sản phẩm mới

@@ -18,6 +18,11 @@ import ProductDetailScreen from "@/screens/products/ProductDetail";
 import { ProductResponse } from "@/model/Product";
 import OAuth2RedirectScreen from "@/screens/auth/OAuth2RedirectScreen";
 import DashboardScreen from "../admin/screens/AdminDashboardScreen";
+
+import ViewProductScreen from "../screens/product/ViewProductScreen";
+
+import ProductDetailsScreen from "@/screens/product/ProductDetailsScreen";
+
 // import Splash from "../screens/auth/Splash";
 // import UpdatePasswordScreen from "../screens/profile/UpdatePasswordScreen";
 // import MyAccountScreen from "../screens/profile/MyAccountScreen";
@@ -56,7 +61,7 @@ export type RootStackParamList = {
   mywishlist: undefined;
   admindashboard: undefined;
   addproduct: undefined;
-  viewproduct: undefined;
+  viewproduct: ProductResponse;
   editproduct: undefined;
   tab: UserResponse;
   cart: { user: UserResponse };
@@ -99,7 +104,8 @@ const Routes: React.FC = () => {
         {/* <Stack.Screen name="mywishlist" component={MyWishlistScreen} /> */}
 
         {/* <Stack.Screen name="addproduct" component={AddProductScreen} /> */}
-        {/* <Stack.Screen name="viewproduct" component={ViewProductScreen} /> */}
+         <Stack.Screen name="viewproduct" component={ViewProductScreen} />
+        <Stack.Screen name="productdetail" component={ProductDetailsScreen} />
         {/* <Stack.Screen name="editproduct" component={EditProductScreen} /> */}
         <Stack.Screen name="tab" component={Tabs} />
          <Stack.Screen name="cart" component={CartScreen} />
