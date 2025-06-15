@@ -30,7 +30,6 @@ import ProductCard from "@/components/ProductCard/ProductCard";
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { UserResponse } from "@/model/User";
 import Carousel from "react-native-reanimated-carousel";
-
 import { RootStackParamList } from "@/routes/Routers";
 import { CompositeScreenProps } from "@react-navigation/native";
 import productApi from "@/services/productApi";
@@ -67,9 +66,6 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
   const carouselRef = useRef<ScrollView>(null);
   const [carouselIndex, setCarouselIndex] = useState(0);
 
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [categoryError, setCategoryError] = useState("");
-
   const { mutate: addToCart } = useMutation({
     mutationFn: cartApi.addToCart,
     onSuccess: (data) => {
@@ -95,8 +91,8 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
     }
   };
 
-  const handleProductPress = (product: ProductResponse) => {
-    navigation.getParent()?.navigate("productdetail", { product });
+  const handleProductPress = (productId: number) => {
+    navigation.getParent()?.navigate("productdetail", { productId })
   };
 
   const handleAddToCart = (productId: number) => {
@@ -124,46 +120,6 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
     }, 3000);
     return () => clearInterval(interval);
   }, [carouselIndex]);
-
-
-  useEffect(() => {
-    if (searchQuery.trim() === "") {
-      setFilteredProducts(products);
-    } else {
-      const lower = searchQuery.toLowerCase();
-      setFilteredProducts(
-        products.filter((p) => p.productName.toLowerCase().includes(lower))
-      );
-    }
-  }, [searchQuery, products]);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const data = await categoryApi.getCategories();
-
-        if (!Array.isArray(data)) {
-          throw new Error("Invalid category data format");
-        }
-
-        setCategories(data);
-        setCategoryError("");
-      } catch (error) {
-        console.error("Category API Error:", error);
-        setCategoryError("Failed to load categories");
-        setCategories([]); // optional: clear old data on failure
-      }
-    };
-
-    fetchCategories();
-  }, []);
-
-  const searchItems = [
-    { id: "1", name: "PlayStation 5" },
-    { id: "2", name: "Xbox Series X" },
-    { id: "3", name: "Nintendo Switch" },
-  ];
-
 
   const [query, setQuery] = useState("");
   const [debouncedQuery] = useDebounce(query, 400);
@@ -207,7 +163,6 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
               onChangeText={setQuery}
             />
           </View>
-
 
           {data.length > 0 && (
             <FlatList
@@ -280,7 +235,6 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
           </View>
           <View style={styles.categoryContainer}>
             <FlatList
-
               horizontal
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={styles.flatListContent}
@@ -289,12 +243,12 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
               renderItem={({ item }) => (
                 <TouchableOpacity
                   style={styles.categoryItem}
-                  onPress={() =>
-                              navigation.navigate("viewproduct", {
-                                categoryId: item.cate_ID, // truyền ID của danh mục vào ViewProduct
-                                categoryName: item.name,
-                              })
-                          }
+                  onPress={() => {
+                    navigation.getParent()?.navigate("viewcategories", {
+                      cate_ID: item.cate_ID,
+                      categoryName: item.name,
+                    });
+                  }}
                 >
                   <Image
                     source={{ uri: item.urlImage }}
@@ -303,7 +257,6 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
                   <Text style={styles.categoryName}>{item.name}</Text>
                 </TouchableOpacity>
               )}
-
             />
           </View>
 
@@ -340,9 +293,8 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
                       image={item.img}
                       price={item.price}
                       quantity={item.stock}
-                      onPress={() => handleProductPress(item)}
-                      onPressSecondary={() => handleAddToCart(item.productId)}
-                    />
+                      onPress={() => handleProductPress(item.productId)}
+                      onPressSecondary={() => handleAddToCart(item.productId)}               />
                   </View>
                 )}
               />
@@ -383,7 +335,7 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
                       image={item.img}
                       price={item.price}
                       quantity={item.stock}
-                      onPress={() => handleProductPress(item)}
+                      onPress={() => handleProductPress(item.productId)}
                       onPressSecondary={() => handleAddToCart(item.productId)}
                     />
                   </View>

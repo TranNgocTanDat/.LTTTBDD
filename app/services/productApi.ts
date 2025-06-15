@@ -5,8 +5,8 @@ import {Category} from "@/model/Category";
 
 export default {
     // Lấy tất cả sản phẩm
-    getProducts: async (limit: number, offset: number): Promise<ProductResponse[]> => {
-        const response = await api.get<APIResponse<ProductResponse[]>>("/products", {
+    getProducts: async (limit: number, offset: number): Promise<Product[]> => {
+        const response = await api.get<APIResponse<Product[]>>("/products", {
           params: { limit, offset },
         });
         console.log("response.data", response);
@@ -14,8 +14,8 @@ export default {
       },
 
     // Lấy sản phẩm theo ID
-    getProductById: async (id: number): Promise<Product> => {
-        const response = await api.get<APIResponse<Product>>(`/products/${id}`);
+    getProductById: async (id: number): Promise<ProductResponse> => {
+        const response = await api.get<APIResponse<ProductResponse>>(`/products/${id}`);
         console.log("Full API response: ", response);
         return response.result;
     },

@@ -11,8 +11,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { ProductResponse } from "../../model/Product";
 
 interface ProductCardProps {
-  product: ProductResponse;
-
   name: string;
   price: number;
   image: string;
