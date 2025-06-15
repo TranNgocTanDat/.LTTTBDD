@@ -1,112 +1,136 @@
-import React from "react";
-import { StyleSheet, Image, TouchableOpacity } from "react-native";
+import React, { ReactElement } from "react";
+import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-
-import { colors } from "../../constants";
-import HomeIconActive from "../../assets/icons/bar_home_icon.png";
-import HomeIcon from "../../assets/icons/bar_home_icon.png";
-import userIcon from "../../assets/icons/bar_profile_icon.png";
-import userIconActive from "../../assets/icons/bar_profile_icon_active.png";
-
+import Entypo from "@expo/vector-icons/Entypo";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import { useStore } from "@/store/store";
 import HomeScreen from "@/screens/HomeScreen";
-// import CategoriesScreen from "../../screens/user/CategoriesScreen";
-// import MyOrderScreen from "../../screens/user/MyOrderScreen";
-// import UserProfileScreen from "../../screens/profile/UserProfileScreen";
+import CartScreen from "@/screens/user/CartScreen";
+import UserProfileScreen from "@/screens/profile/UserProfileScreen";
+import NotificationScreen from "@/screens/user/NotificationScreen";
 
-import { RootStackParamList } from "@/routes/Routers";
-import { UserResponse } from "@/model/User";
-import MyOrderScreen from "@/screens/user/MyOrderScreen";
-import CartScreen from "@/screens/cart/CartScreen";
+import { colors } from "@/constants"; // 🔁 Đảm bảo file này export đúng: primary, muted, white,...
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import type { RootStackParamList } from "@/routes/Routers";
+import type { UserResponse } from "@/model/User";
 
 type Props = NativeStackScreenProps<RootStackParamList, "tab">;
 
 export type TabParamList = {
-  home: { user: UserResponse };
-  categories: { user: UserResponse };
-  myorder: { user: UserResponse };
-  user: { user: UserResponse };
+    home: { user: UserResponse };
+    myorder: { user: UserResponse };
+    notification: { user: UserResponse };
+    user: { user: UserResponse };
 };
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
 const Tabs: React.FC<Props> = ({ route }) => {
-  const  user  = route.params;
+    const  user  = route.params;
 
-  return (
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarHideOnKeyboard: true,
-        tabBarStyle: {
-          borderTopLeftRadius: 20,
-          borderTopRightRadius: 20,
-          backgroundColor: colors.white,
-          display: "flex",
-          position: "absolute",
-        },
-        headerShown: false,
-        tabBarShowLabel: false,
-        tabBarActiveTintColor: colors.primary,
+    const cartList = useStore((state) => state.CartList);
+    const notificationList = useStore((state) => state.NotificationList);
 
-        tabBarIcon: ({ focused }) => {
-          const routeName = route.name;
-          if (routeName === "home") {
-            return (
-              <TouchableOpacity disabled>
-                <Image
-                  source={focused ? HomeIconActive : HomeIcon}
-                  style={styles.tabIconStyle}
-                />
-              </TouchableOpacity>
-            );
-          } else if (routeName === "categories") {
-            return (
-              <TouchableOpacity disabled>
-                <Ionicons
-                  name="apps"
-                  size={28}
-                  color={focused ? colors.primary : colors.muted}
-                />
-              </TouchableOpacity>
-            );
-          } else if (routeName === "myorder") {
-            return (
-              <TouchableOpacity disabled>
-                <Ionicons
-                  name="cart-outline"
-                  size={29}
-                  color={focused ? colors.primary : colors.muted}
-                />
-              </TouchableOpacity>
-            );
-          } else if (routeName === "user") {
-            return (
-              <TouchableOpacity disabled>
-                <Image
-                  source={focused ? userIconActive : userIcon}
-                  style={styles.tabIconStyle}
-                />
-              </TouchableOpacity>
-            );
-          }
-          return null;
-        },
-      })}
-    >
-      <Tab.Screen name="home" component={HomeScreen} initialParams={{ user }} />
-      {/* <Tab.Screen name="categories" component={CategoriesScreen} initialParams={{ user }} /> */}
-      <Tab.Screen name="myorder" component={CartScreen} initialParams={{ user }} />
-      {/* <Tab.Screen name="user" component={UserProfileScreen} initialParams={{ user }} /> */}
-    </Tab.Navigator>
-  );
+    const cartCount = cartList?.length || 0;
+    const unreadCount = notificationList?.filter((n) => !n.read)?.length || 0;
+
+    return (
+        <Tab.Navigator
+            screenOptions={({ route }) => ({
+                tabBarHideOnKeyboard: true,
+                headerShown: false,
+                tabBarShowLabel: false,
+                tabBarActiveTintColor: colors.primary,
+                tabBarStyle: {
+                    borderTopLeftRadius: 20,
+                    borderTopRightRadius: 20,
+                    backgroundColor: colors.white,
+                    position: "absolute",
+                },
+                tabBarIcon: ({ focused }) => {
+                    const iconSize = 24;
+
+                    const renderIcon = (icon: ReactElement, badgeCount?: number) => (
+                        <View style={{ position: "relative" }}>
+                            {icon}
+                            {badgeCount && badgeCount > 0 && (
+                                <View style={styles.badgeContainer}>
+                                    <Text style={styles.badgeText}>
+                                        {badgeCount > 99 ? "99+" : badgeCount}
+                                    </Text>
+                                </View>
+                            )}
+                        </View>
+                    );
+
+                    switch (route.name) {
+                        case "home":
+                            return renderIcon(
+                                <Entypo
+                                    name="home"
+                                    size={iconSize}
+                                    color={focused ? colors.primary : colors.muted}
+                                />
+                            );
+                        case "myorder":
+                            return renderIcon(
+                                <Ionicons
+                                    name="cart-outline"
+                                    size={iconSize}
+                                    color={focused ? colors.primary : colors.muted}
+                                />,
+                                cartCount
+                            );
+                        case "notification":
+                            return renderIcon(
+                                <Ionicons
+                                    name="notifications"
+                                    size={iconSize}
+                                    color={focused ? colors.primary : colors.muted}
+                                />,
+                                unreadCount
+                            );
+                        case "user":
+                            return renderIcon(
+                                <AntDesign
+                                    name="user"
+                                    size={iconSize}
+                                    color={focused ? colors.primary : colors.muted}
+                                />
+                            );
+                        default:
+                            return null;
+                    }
+                },
+            })}
+        >
+            <Tab.Screen name="home" component={HomeScreen} initialParams={{ user }} />
+            <Tab.Screen name="myorder" component={CartScreen} initialParams={{ user }} />
+            <Tab.Screen name="notification" component={NotificationScreen} initialParams={{ user }} />
+            <Tab.Screen name="user" component={UserProfileScreen} initialParams={{ user }} />
+        </Tab.Navigator>
+    );
 };
 
 export default Tabs;
 
 const styles = StyleSheet.create({
-  tabIconStyle: {
-    width: 10,
-    height: 10,
-  },
+    badgeContainer: {
+        position: "absolute",
+        top: -4,
+        right: -8,
+        backgroundColor: "#e91e63",
+        borderRadius: 10,
+        paddingHorizontal: 5,
+        minWidth: 18,
+        height: 18,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    badgeText: {
+        color: "#fff",
+        fontSize: 11,
+        fontWeight: "bold",
+    },
 });

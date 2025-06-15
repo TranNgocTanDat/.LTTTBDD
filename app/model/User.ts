@@ -6,6 +6,7 @@ export  interface User {
   lastName: string;
   dob: string;
   email: string;
+  avartarUrl: string,
   verificationCode: string;
   roles: string[];
 }
@@ -19,23 +20,25 @@ export  interface UserCreationRequest {
 
 // UserResponse.ts
 export  interface UserResponse {
+  name: any;
   id: string;
   username: string;
   password: string;
   email: string;
   verificationCode: string;
   firstName: string;
-  lastName: string;
+  lastName: string,
+  avatarUrl: string,
   dob: string;
   roles: string[];
 }
 
 // UserUpdateRequest.ts
 export  interface UserUpdateRequest {
-  username: string;
-  password: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  dob: string;
+  username?: string;
+  password?: string;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  dob?: string;
 }

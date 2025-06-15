@@ -5,11 +5,13 @@ import {Category} from "@/model/Category";
 
 export default {
     // Lấy tất cả sản phẩm
-    getProducts: async (): Promise<ProductResponse[]> => {
-        const response = await api.get<APIResponse<ProductResponse[]>>("/products");
-        console.log(response);
+    getProducts: async (limit: number, offset: number): Promise<ProductResponse[]> => {
+        const response = await api.get<APIResponse<ProductResponse[]>>("/products", {
+          params: { limit, offset },
+        });
+        console.log("response.data", response);
         return response.result;
-    },
+      },
 
     // Lấy sản phẩm theo ID
     getProductById: async (id: number): Promise<Product> => {
@@ -18,6 +20,10 @@ export default {
         return response.result;
     },
 
+    searchGames: async (keyword: string): Promise<ProductResponse[]> => {
+        const response = await api.get<APIResponse<ProductResponse[]>>("/products/search", { params: { keyword } })
+        return response.result;
+    },
 
 
     // Lấy sản phẩm theo categoryId (theo đúng endpoint backend)

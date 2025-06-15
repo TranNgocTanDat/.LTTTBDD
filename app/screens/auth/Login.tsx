@@ -7,7 +7,7 @@ import {
   StyleSheet,
   Image,
   ActivityIndicator,
-  Alert,
+  Alert, Linking,
 } from "react-native";
 import { useMutation } from "@tanstack/react-query";
 import { useDispatch } from "react-redux";
@@ -34,7 +34,7 @@ const LoginScreen = () => {
       dispatch(loginSuccess({ token: data.token, userResponse: data.userResponse }));
       const roles = data.userResponse.roles;
       if (roles.includes("ADMIN")) {
-        navigation.replace("tab", data.userResponse);
+        // navigation.replace("tab", data.userResponse);
         // navigation.replace("dashboard", { authUser: data.userResponse });
       } else {
         navigation.replace("tab", data.userResponse);
@@ -100,8 +100,8 @@ const LoginScreen = () => {
         <TouchableOpacity
             style={styles.googleButton}
             onPress={() => {
-              // Cần tích hợp Google OAuth thực tế nếu dùng
-              const googleUrl = "http://localhost:8080/api/oauth2/authorization/google";
+              const googleUrl = "https://31b3-42-119-81-92.ngrok-free.app/api/login/oauth2/code/google";
+              Linking.openURL(googleUrl);
             }}
         >
           <Image

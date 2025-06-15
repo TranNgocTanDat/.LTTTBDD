@@ -1,3 +1,4 @@
+import React from "react";
 import {
   StyleSheet,
   Text,
@@ -6,16 +7,18 @@ import {
   Image,
   GestureResponderEvent,
 } from "react-native";
-import React from "react";
-import { colors } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
 import { ProductResponse } from "../../model/Product";
 
 interface ProductCardProps {
   product: ProductResponse;
+
+  name: string;
+  price: number;
+  image: string;
+  quantity: number;
   onPress: (event: GestureResponderEvent) => void;
   onPressSecondary: (event: GestureResponderEvent) => void;
-  cardSize?: "small" | "large";
 }
 
 // Cắt chuỗi an toàn
@@ -24,57 +27,42 @@ const truncate = (str: string, maxLength: number) => {
 };
 
 const ProductCard: React.FC<ProductCardProps> = ({
-                                                   product,
-                                                   onPress,
-                                                   onPressSecondary,
-                                                   cardSize = "small",
-                                                 }) => {
-  const {
-    productName,
-    price,
-    img,
-    stock,
-    categoryName,
-    description,
-  } = product;
 
+  name,
+  price,
+  image,
+  quantity,
+  onPress,
+  onPressSecondary,
+}) => {
   return (
+    <TouchableOpacity style={styles.container} onPress={onPress}>
+      <View style={styles.imageWrapper}>
+        <Image source={{ uri: image }} style={styles.image} />
+      </View>
+
+      <Text style={styles.name}>{name}</Text>
+
+      <View style={styles.rating}>
+        {[...Array(4)].map((_, i) => (
+          <Ionicons key={i} name="star" size={14} color="#FFD700" />
+        ))}
+        <Ionicons name="star-outline" size={14} color="#FFD700" />
+      </View>
+
+      <View style={styles.details}>
+        <Text style={styles.weight}>500g</Text>
+        <Text style={styles.price}>${price}</Text>
+      </View>
+
       <TouchableOpacity
-          style={[styles.container, { width: cardSize === "large" ? "100%" : 150 }]}
-          onPress={onPress}
+        style={styles.addButton}
+        onPress={onPressSecondary}
+        disabled={quantity === 0}
       >
-        <View style={styles.imageContainer}>
-          <Image
-              source={{
-                uri: img || "https://via.placeholder.com/120",
-              }}
-              style={styles.productImage}
-          />
-        </View>
-        <View style={styles.infoContainer}>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.secondaryTextSm}>
-              {truncate(productName || "No name", 14)}
-            </Text>
-            <Text style={styles.categoryText}>{truncate(categoryName, 18)}</Text>
-            <Text style={styles.primaryTextSm}>{price}₫</Text>
-          </View>
-          <View>
-            {stock > 0 ? (
-                <TouchableOpacity
-                    style={styles.iconContainer}
-                    onPress={onPressSecondary}
-                >
-                  <Ionicons name="cart" size={20} color="white" />
-                </TouchableOpacity>
-            ) : (
-                <TouchableOpacity style={styles.iconContainerDisable} disabled>
-                  <Ionicons name="cart" size={20} color="white" />
-                </TouchableOpacity>
-            )}
-          </View>
-        </View>
+        <Ionicons name="add" size={14} color="#fff" />
       </TouchableOpacity>
+    </TouchableOpacity>
   );
 };
 
@@ -82,66 +70,72 @@ export default ProductCard;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.white,
     width: 150,
-    height: 220,
-    borderRadius: 10,
-    flexDirection: "column",
-    justifyContent: "flex-start",
+    height: 160,
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    paddingTop: 90, // để ảnh nằm ngoài
     alignItems: "center",
-    padding: 5,
-    elevation: 5,
+    position: "relative",
+    marginVertical: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
   },
-  imageContainer: {
-    backgroundColor: colors.light,
-    width: "100%",
-    height: 140,
-    borderRadius: 10,
+
+  imageWrapper: {
+    position: "absolute",
+    top: -20,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: "#f0f0f0",
     justifyContent: "center",
     alignItems: "center",
-    padding: 5,
-    paddingBottom: 0,
+    overflow: "hidden",
   },
-  productImage: {
-    height: 120,
-    width: 120,
-    borderRadius: 10,
+  image: {
+    width: 55,
+    height: 55,
     resizeMode: "cover",
   },
-  infoContainer: {
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 5,
-  },
-  secondaryTextSm: {
+  name: {
+    color: "#333",
     fontSize: 14,
     fontWeight: "600",
-    color: colors.dark,
+    marginBottom: 6,
   },
-  categoryText: {
-    fontSize: 12,
-    color: colors.muted,
+  rating: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 6,
   },
-  primaryTextSm: {
-    fontSize: 15,
-    fontWeight: "bold",
-    color: colors.primary,
-  },
-  iconContainer: {
-    backgroundColor: colors.primary,
-    width: 30,
-    height: 30,
-    borderRadius: 5,
-    justifyContent: "center",
+  details: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "80%",
     alignItems: "center",
   },
-  iconContainerDisable: {
-    backgroundColor: colors.muted,
-    width: 30,
-    height: 30,
-    borderRadius: 5,
+
+  weight: {
+    fontSize: 12,
+    color: "#888",
+  },
+  price: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#000",
+  },
+  addButton: {
+    position: "absolute",
+    bottom: -5,
+    right: -5,
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: "#FFD700",
     justifyContent: "center",
     alignItems: "center",
   },

@@ -7,7 +7,7 @@ import { UserResponse } from "@/model/User";
 import Splash from "@/screens/Splash";
 import MyOrderDetailScreen, { Order } from "@/screens/user/MyOrderDetailScreen";
 
-import CartScreen from "@/screens/cart/CartScreen";
+import CartScreen from "@/screens/user/CartScreen";
 
 // import SignupScreen from "../screens/auth/SignupScreen";
 
@@ -18,6 +18,7 @@ import ViewProductScreen from "../screens/product/ViewProductScreen";
 import {ProductResponse} from "@/types";
 import ProductDetailsScreen from "@/screens/product/ProductDetailsScreen";
 
+
 // import Splash from "../screens/auth/Splash";
 
 // import UpdatePasswordScreen from "../screens/profile/UpdatePasswordScreen";
@@ -27,7 +28,9 @@ import ProductDetailsScreen from "@/screens/product/ProductDetailsScreen";
 // import ViewProductScreen from "../screens/admin/ViewProductScreen";
 // import Tabs from "./tabs/Tabs";
 // import CartScreen from "../screens/user/CartScreen";
-// import CheckoutScreen from "../screens/user/CheckoutScreen";
+import CheckoutScreen from "../screens/user/CheckoutScreen";
+import HomeScreen from "../screens/HomeScreen";
+import NotificationScreen from "@/screens/user/NotificationScreen";
 // import OrderConfirmScreen from "../screens/user/OrderConfirmScreen";
 // import ProductDetailScreen from "../screens/user/ProductDetailScreen";
 // import EditProductScreen from "../screens/admin/EditProductScreen";
@@ -47,6 +50,7 @@ export type RootStackParamList = {
   login: undefined;
   signup: undefined;
   verify :{ email: string };
+  oauth2redirect: { token: string };
   forgetpassword: undefined;
   updatepassword: undefined;
   myaccount: undefined;
@@ -56,10 +60,10 @@ export type RootStackParamList = {
   viewproduct: ProductResponse;
   editproduct: undefined;
   tab: UserResponse;
-  cart: undefined;
+  cart: { user: UserResponse };
   checkout: undefined;
   orderconfirm: undefined;
-  productdetail: undefined;
+  productdetail: { product: ProductResponse };
   vieworder: undefined;
   vieworderdetails: undefined;
   myorder: undefined;
@@ -72,6 +76,7 @@ export type RootStackParamList = {
   editcategories: undefined;
   viewusers: undefined;
   categories: undefined;
+  notification: undefined;
   
 };
 
@@ -82,10 +87,12 @@ const Routes: React.FC = () => {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="splash" screenOptions={{ headerShown: false }}>
         <Stack.Screen name="splash" component={Splash} />
+
         <Stack.Screen name="login" component={LoginScreen} />
         <Stack.Screen name="signup" component={SignupScreen} />
         <Stack.Screen name="forgetpassword" component={ForgetPasswordScreen} />
           <Stack.Screen name="verify" component={VerifyUserScreen} />
+        <Stack.Screen name="oauth2redirect" component={OAuth2RedirectScreen} />
         {/* <Stack.Screen name="updatepassword" component={UpdatePasswordScreen} /> */}
         {/* <Stack.Screen name="myaccount" component={MyAccountScreen} /> */}
         {/* <Stack.Screen name="mywishlist" component={MyWishlistScreen} /> */}
@@ -96,9 +103,9 @@ const Routes: React.FC = () => {
         {/* <Stack.Screen name="editproduct" component={EditProductScreen} /> */}
         <Stack.Screen name="tab" component={Tabs} />
          <Stack.Screen name="cart" component={CartScreen} />
-        {/* <Stack.Screen name="checkout" component={CheckoutScreen} /> */}
+         <Stack.Screen name="checkout" component={CheckoutScreen} />
         {/* <Stack.Screen name="orderconfirm" component={OrderConfirmScreen} /> */}
-        {/* <Stack.Screen name="productdetail" component={ProductDetailScreen} /> */}
+        <Stack.Screen name="productdetail" component={ProductDetailScreen} />
         {/* <Stack.Screen name="vieworder" component={ViewOrdersScreen} /> */}
         {/* <Stack.Screen name="vieworderdetails" component={ViewOrderDetailScreen} /> */}
         {/* <Stack.Screen name="myorder" component={MyOrderScreen} /> */}
@@ -107,7 +114,7 @@ const Routes: React.FC = () => {
         {/* <Stack.Screen name="addcategories" component={AddCategoryScreen} /> */}
         {/* <Stack.Screen name="editcategories" component={EditCategoryScreen} /> */}
         {/* <Stack.Screen name="viewusers" component={ViewUsersScreen} /> */}
-        {/* <Stack.Screen name="categories" component={CategoriesScreen} /> */}
+         <Stack.Screen name="notification" component={NotificationScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
