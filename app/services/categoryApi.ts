@@ -14,9 +14,9 @@ export default {
         // console.log(response);
         return response.result;
     },
-    getProductsByCategory: async (cateId: number) => {
-        const response = await api.get<APIResponse<Product[]>>(
-            `/categories/${cateId}/products`
+    getProductsByCategory: async (cate_ID: number) => {
+        const response = await api.get<APIResponse<CategoryResponse>>(
+            `/categories/${cate_ID}/products`
         );
         return response.result;
     },
