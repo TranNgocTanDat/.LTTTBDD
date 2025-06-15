@@ -12,6 +12,7 @@ import { useMutation } from "@tanstack/react-query";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "@/routes/Routers";
 import authApi from "../../services/authApi";
+import * as Animatable from "react-native-animatable";
 
 type Props = NativeStackScreenProps<RootStackParamList, "verify">;
 
@@ -48,35 +49,44 @@ const VerifyUserScreen: React.FC<Props> = ({ navigation, route }) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Xác thực tài khoản</Text>
-            <Text style={styles.subtitle}>
-                Vui lòng kiểm tra email <Text style={{ fontWeight: "bold" }}>{email}</Text> và nhập mã xác thực.
-            </Text>
+            <Animatable.View animation="fadeInUp" duration={600} delay={100}>
+                <Text style={styles.title}> Xác thực tài khoản</Text>
+                <Text style={styles.subtitle}>
+                    Vui lòng kiểm tra email <Text style={{ fontWeight: "bold" }}>{email}</Text> và nhập mã xác thực.
+                </Text>
+            </Animatable.View>
 
-            <TextInput
-                style={styles.input}
-                placeholder="Nhập mã xác thực"
-                keyboardType="numeric"
-                value={verificationCode}
-                onChangeText={setCode}
-                autoCapitalize="none"
-            />
+            <Animatable.View animation="fadeInUp" duration={600} delay={300}>
+                <TextInput
+                    style={styles.input}
+                    placeholder="Nhập mã xác thực"
+                    keyboardType="numeric"
+                    value={verificationCode}
+                    onChangeText={setCode}
+                    autoCapitalize="none"
+                    placeholderTextColor="#9ca3af"
+                />
+            </Animatable.View>
 
-            <TouchableOpacity
-                style={styles.button}
-                onPress={handleSubmit}
-                disabled={isSubmitting}
-            >
-                {isSubmitting ? (
-                    <ActivityIndicator color="#fff" />
-                ) : (
-                    <Text style={styles.buttonText}>Xác thực</Text>
-                )}
-            </TouchableOpacity>
+            <Animatable.View animation="fadeInUp" duration={600} delay={500}>
+                <TouchableOpacity
+                    style={[styles.button, isSubmitting && styles.buttonDisabled]}
+                    onPress={handleSubmit}
+                    disabled={isSubmitting}
+                >
+                    {isSubmitting ? (
+                        <ActivityIndicator color="#fff" />
+                    ) : (
+                        <Text style={styles.buttonText}>Xác thực</Text>
+                    )}
+                </TouchableOpacity>
+            </Animatable.View>
 
-            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backLink}>
-                <Text style={styles.backText}>← Quay lại</Text>
-            </TouchableOpacity>
+            <Animatable.View animation="fadeInUp" duration={600} delay={700}>
+                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backLink}>
+                    <Text style={styles.backText}>← Quay lại</Text>
+                </TouchableOpacity>
+            </Animatable.View>
         </View>
     );
 };
@@ -95,6 +105,7 @@ const styles = StyleSheet.create({
         fontWeight: "600",
         textAlign: "center",
         marginBottom: 8,
+        color: "#111827",
     },
     subtitle: {
         fontSize: 14,
@@ -108,13 +119,23 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         borderColor: "#e5e7eb",
         borderWidth: 1,
+        fontSize: 15,
+        color: "#111827",
         marginBottom: 16,
     },
     button: {
         backgroundColor: "#2563eb",
-        padding: 14,
-        borderRadius: 8,
+        paddingVertical: 14,
+        borderRadius: 10,
         alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
+    },
+    buttonDisabled: {
+        opacity: 0.7,
     },
     buttonText: {
         color: "#fff",
@@ -128,5 +149,6 @@ const styles = StyleSheet.create({
     backText: {
         color: "#2563eb",
         fontSize: 14,
+        fontWeight: "500",
     },
 });
