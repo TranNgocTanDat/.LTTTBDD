@@ -16,24 +16,26 @@ import { COLORS, SPACING } from '../../theme/theme';
 import { useStore } from '../../store/store';
 import Entypo from '@expo/vector-icons/Entypo';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import CheckoutSuccess from "@/components/checkout/CheckoutSuccess";
+import CheckoutSuccess from '@/components/checkout/CheckoutSuccess';
+import uuid from 'react-native-uuid'; // ✅ Fix import uuid
 
-const paymentMethods = ['Thanh toán khi nhận hàng', 'Thẻ tín dụng' , 'MoMo'];
+const paymentMethods = ['Thanh toán khi nhận hàng', 'Thẻ tín dụng', 'MoMo'];
 
 const CheckoutScreen = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<any>();
     const route = useRoute();
     const { amount } = route.params as { amount: string };
+
     const [confirmed, setConfirmed] = useState(false);
-
-    const CartList = useStore((state: any) => state.CartList);
-
     const [name, setName] = useState('');
     const [address, setAddress] = useState('');
     const [phone, setPhone] = useState('');
     const [selectedPayment, setSelectedPayment] = useState(paymentMethods[0]);
     const [promoCode, setPromoCode] = useState('');
     const [discount, setDiscount] = useState(0);
+    const orderId = Math.floor(1000 + Math.random() * 9000);
+    const CartList = useStore((state: any) => state.CartList);
+    const addNotification = useStore((state: any) => state.addNotification);
 
     const total = parseFloat(amount);
     const discountedTotal = (total * (100 - discount)) / 100;
@@ -52,18 +54,28 @@ const CheckoutScreen = () => {
         }
     };
 
-
-
     const handleConfirm = () => {
         if (!name || !address || !phone) {
             Alert.alert('Thiếu thông tin', 'Vui lòng điền đầy đủ thông tin giao hàng.');
             return;
-        }else
-            setConfirmed(true);
+        }
 
+        const newNotification = {
+            id: String(Math.floor(1000 + Math.random() * 9000)), // hoặc uuid.v4()
+            title: `Đặt hàng thành công (#${orderId})`,
+            message: `Đơn hàng của bạn trị giá ${discountedTotal.toLocaleString('vi-VN')}đ đã được đặt thành công.`,
+            date: new Date().toISOString(),
+            read: false,
+        };
+
+
+
+        addNotification(newNotification);
+        setConfirmed(true);
     };
+
     if (confirmed) {
-        return <CheckoutSuccess title="Đặt hàng thành công" onPress={() => navigation.goBack()}/>;
+        return <CheckoutSuccess title="Đặt hàng thành công" onPress={() => navigation.goBack()} />;
     }
 
     const renderProduct = ({ item }: any) => {
@@ -75,11 +87,8 @@ const CheckoutScreen = () => {
             <View style={styles.cartItem}>
                 <Text style={styles.cartItemText}>{item.name}</Text>
                 <Text style={styles.cartItemText}>
-                    {parseFloat(totalPerItem.toString()).toLocaleString('vi-VN', {
-                        maximumFractionDigits: 0,
-                    })}đ
+                    {totalPerItem.toLocaleString('vi-VN', { maximumFractionDigits: 0 })}đ
                 </Text>
-
             </View>
         );
     };
@@ -87,7 +96,6 @@ const CheckoutScreen = () => {
     return (
         <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 100 }}>
             <StatusBar backgroundColor={COLORS.primaryBlackHex} />
-
             <View style={styles.TopBarContainer}>
                 <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Ionicons
@@ -109,25 +117,9 @@ const CheckoutScreen = () => {
             />
 
             <Text style={styles.sectionTitle}>Thông tin giao hàng</Text>
-            <TextInput
-                placeholder="Họ và tên"
-                style={styles.input}
-                value={name}
-                onChangeText={setName}
-            />
-            <TextInput
-                placeholder="Địa chỉ giao hàng"
-                style={styles.input}
-                value={address}
-                onChangeText={setAddress}
-            />
-            <TextInput
-                placeholder="Số điện thoại"
-                style={styles.input}
-                keyboardType="phone-pad"
-                value={phone}
-                onChangeText={setPhone}
-            />
+            <TextInput placeholder="Họ và tên" style={styles.input} value={name} onChangeText={setName} />
+            <TextInput placeholder="Địa chỉ giao hàng" style={styles.input} value={address} onChangeText={setAddress} />
+            <TextInput placeholder="Số điện thoại" style={styles.input} keyboardType="phone-pad" value={phone} onChangeText={setPhone} />
 
             <Text style={styles.sectionTitle}>Mã giảm giá</Text>
             <View style={styles.promoContainer}>
@@ -171,10 +163,7 @@ const CheckoutScreen = () => {
                         )}
                         <Text
                             style={{
-                                color:
-                                    selectedPayment === method
-                                        ? COLORS.primaryWhiteHex
-                                        : COLORS.primaryBlackHex,
+                                color: selectedPayment === method ? COLORS.primaryWhiteHex : COLORS.primaryBlackHex,
                             }}
                         >
                             {method}
@@ -183,16 +172,11 @@ const CheckoutScreen = () => {
                 </TouchableOpacity>
             ))}
 
-
-
             <View style={styles.totalContainer}>
                 <Text style={styles.totalText}>Tổng cộng:</Text>
                 <Text style={styles.totalAmount}>
-                    {parseFloat(discountedTotal.toString()).toLocaleString('vi-VN', {
-                        maximumFractionDigits: 0,
-                    })}đ
+                    {discountedTotal.toLocaleString('vi-VN', { maximumFractionDigits: 0 })}đ
                 </Text>
-
             </View>
 
             <Text style={styles.deliveryEstimate}>
@@ -207,6 +191,7 @@ const CheckoutScreen = () => {
 };
 
 export default CheckoutScreen;
+
 
 const styles = StyleSheet.create({
     container: {

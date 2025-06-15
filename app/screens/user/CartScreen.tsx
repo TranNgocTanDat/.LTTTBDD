@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import {
     View,
     Text,
@@ -17,56 +17,23 @@ import PaymentFooter from "../../components/PaymentFooter/PaymentFooter";
 const CartScreen = ({ navigation }: any) => {
     const CartList = useStore((state: any) => state.CartList);
     const CartPrice = useStore((state: any) => state.CartPrice);
-    const incrementCartItemQuantity = useStore(
-        (state: any) => state.incrementCartItemQuantity
-    );
-    const decrementCartItemQuantity = useStore(
-        (state: any) => state.decrementCartItemQuantity
-    );
-    const calculateCartPrice = useStore(
-        (state: any) => state.calculateCartPrice
-    );
+    const incrementCartItemQuantity = useStore((state: any) => state.incrementCartItemQuantity);
+    const decrementCartItemQuantity = useStore((state: any) => state.decrementCartItemQuantity);
+    const calculateCartPrice = useStore((state: any) => state.calculateCartPrice);
     const removeFromCart = useStore((state: any) => state.removeFromCart);
-    const addToCart = useStore((state: any) => state.addToCart);
 
     const handlePayment = () => {
         navigation.push("checkout", { amount: CartPrice });
     };
 
     useEffect(() => {
-        if (CartList.length === 0) {
-            addToCart({
-                id: "1",
-                name: "Espresso",
-                prices: [{ size: "S", price: "3000", quantity: 1 }],
-                image: require("../../assets/image/cangu.jpg"),
-                special_ingredient: "Arabica",
-                roasted: "Medium",
-                type: "Coffee",
-                index: 0,
-            });
-
-            addToCart({
-                id: "2",
-                name: "Latte",
-                prices: [{ size: "M", price: "4500", quantity: 2 }],
-                image: require('../../assets/image/tom.jpg'),
-                special_ingredient: "Milk",
-                roasted: "Light",
-                type: "Coffee",
-                index: 1,
-            });
-        }
-    }, []);
+        calculateCartPrice();
+    }, [CartList]);
 
     const removeHandler = (id: string, size: string) => {
         removeFromCart(id, size);
         calculateCartPrice();
     };
-
-    useEffect(() => {
-        calculateCartPrice();
-    }, [CartList]);
 
     const incrementHandler = (id: string, size: string) => {
         incrementCartItemQuantity(id, size);
@@ -108,7 +75,7 @@ const CartScreen = ({ navigation }: any) => {
                 ) : (
                     <View style={styles.cartItemsContainer}>
                         {CartList.map((item: any) => (
-                            <TouchableOpacity key={item.id}>
+                            <TouchableOpacity key={`${item.id}-${item.index}`}>
                                 <CartItem
                                     {...item}
                                     incrementCartItemQuantityHandler={incrementHandler}
@@ -117,7 +84,6 @@ const CartScreen = ({ navigation }: any) => {
                                 />
                             </TouchableOpacity>
                         ))}
-
                     </View>
                 )}
             </ScrollView>
@@ -168,25 +134,5 @@ const styles = StyleSheet.create({
     cartItemsContainer: {
         paddingTop: SPACING.space_10,
         gap: SPACING.space_15,
-    },
-    totalContainer: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginTop: SPACING.space_20,
-        paddingVertical: SPACING.space_15,
-        borderTopWidth: 1,
-        borderColor: COLORS.primaryGreyHex,
-    },
-    totalText: {
-        fontSize: 18,
-        fontWeight: "500",
-        color: COLORS.primaryBlackHex,
-    },
-    totalAmount: {
-        fontSize: 18,
-        fontWeight: "700",
-        color: COLORS.primaryBlackHex,
-        margin: 10,
     },
 });
