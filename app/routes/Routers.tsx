@@ -17,19 +17,19 @@ import VerifyUserScreen from "../screens/auth/VerifyUserScreen";
 import ProductDetailScreen from "@/screens/products/ProductDetail";
 import { ProductResponse } from "@/model/Product";
 import OAuth2RedirectScreen from "@/screens/auth/OAuth2RedirectScreen";
-
+import DashboardScreen from "../admin/screens/AdminDashboardScreen";
 // import Splash from "../screens/auth/Splash";
-
 // import UpdatePasswordScreen from "../screens/profile/UpdatePasswordScreen";
 // import MyAccountScreen from "../screens/profile/MyAccountScreen";
 // import AddProductScreen from "../screens/admin/AddProductScreen";
-// import DashboardScreen from "../screens/admin/DashboardScreen";
+
 // import ViewProductScreen from "../screens/admin/ViewProductScreen";
 // import Tabs from "./tabs/Tabs";
 // import CartScreen from "../screens/user/CartScreen";
 import CheckoutScreen from "../screens/user/CheckoutScreen";
 import HomeScreen from "../screens/HomeScreen";
 import NotificationScreen from "@/screens/user/NotificationScreen";
+import AdminDashboardScreen from "../admin/screens/AdminDashboardScreen";
 // import OrderConfirmScreen from "../screens/user/OrderConfirmScreen";
 // import ProductDetailScreen from "../screens/user/ProductDetailScreen";
 // import EditProductScreen from "../screens/admin/EditProductScreen";
@@ -54,7 +54,7 @@ export type RootStackParamList = {
   updatepassword: undefined;
   myaccount: undefined;
   mywishlist: undefined;
-  dashboard: undefined;
+  admindashboard: undefined;
   addproduct: undefined;
   viewproduct: undefined;
   editproduct: undefined;
@@ -92,10 +92,12 @@ const Routes: React.FC = () => {
         <Stack.Screen name="forgetpassword" component={ForgetPasswordScreen} />
           <Stack.Screen name="verify" component={VerifyUserScreen} />
         <Stack.Screen name="oauth2redirect" component={OAuth2RedirectScreen} />
+        <Stack.Screen name="admindashboard" component={AdminDashboardScreen}></Stack.Screen>
+
         {/* <Stack.Screen name="updatepassword" component={UpdatePasswordScreen} /> */}
         {/* <Stack.Screen name="myaccount" component={MyAccountScreen} /> */}
         {/* <Stack.Screen name="mywishlist" component={MyWishlistScreen} /> */}
-        {/* <Stack.Screen name="dashboard" component={DashboardScreen} /> */}
+
         {/* <Stack.Screen name="addproduct" component={AddProductScreen} /> */}
         {/* <Stack.Screen name="viewproduct" component={ViewProductScreen} /> */}
         {/* <Stack.Screen name="editproduct" component={EditProductScreen} /> */}
