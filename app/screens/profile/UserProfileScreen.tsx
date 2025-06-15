@@ -74,7 +74,7 @@ const UserProfileScreen: React.FC<Props> = ({ navigation, route }) => {
       </View>
       {user && (
         <View style={styles.UserProfileCardContianer}>
-          <UserProfileCard Icon={User} user={user} />
+          <UserProfileCard  user={user} />
         </View>
       )}
       <View style={styles.OptionsContainer}>
@@ -108,6 +108,7 @@ export default UserProfileScreen;
 
 const styles = StyleSheet.create({
   container: {
+    top:15,
     width: "100%",
     backgroundColor: colors.light,
     alignItems: "center",
