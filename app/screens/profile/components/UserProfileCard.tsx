@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Image } from "react-native";
 import React from "react";
 import { colors } from "../../../constants";
 import { LucideIcon } from "lucide-react-native";
@@ -6,18 +6,20 @@ import { UserResponse } from "@/model/User";
 
 // Định nghĩa type cho props
 interface UserProfileCardProps {
-  Icon: LucideIcon;
   user: UserResponse;
 }
 
-const UserProfileCard: React.FC<UserProfileCardProps> = ({
-  Icon,
-  user
-}) => {
+const UserProfileCard: React.FC<UserProfileCardProps> = ({ user }) => {
   return (
     <View style={styles.Container}>
       <View style={styles.avatarContainer}>
-        <Icon color={colors.primary} size={80} />
+        <Image
+          source={{
+            uri: `http://192.168.1.218:8080/api${user.avatarUrl}`,
+          }}
+          style={styles.avatarImage}
+          onError={(e) => console.log("Image load error:", e.nativeEvent.error)}
+        />
       </View>
       <View style={styles.infoContainer}>
         <Text style={styles.usernameText}>{user.username}</Text>
@@ -40,9 +42,15 @@ const styles = StyleSheet.create({
     width: "40%",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: colors.primary_light,
+    // backgroundColor: colors.primary_light,
     borderRadius: 20,
     padding: 10,
+  },
+  avatarImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 40, // Làm tròn thành hình tròn
+    resizeMode: "cover", // Đảm bảo hình không bị méo
   },
   infoContainer: {
     width: "50%",
