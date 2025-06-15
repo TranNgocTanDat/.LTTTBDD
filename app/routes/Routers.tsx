@@ -14,9 +14,10 @@ import CartScreen from "@/screens/user/CartScreen";
 import SignupScreen from "../screens/auth/RegisterScreen";
 import ForgetPasswordScreen from "../screens/auth/ForgetPasswordScreen";
 import VerifyUserScreen from "../screens/auth/VerifyUserScreen";
-import ProductDetailScreen from "@/screens/products/ProductDetail";
-import { ProductResponse } from "@/model/Product";
-import OAuth2RedirectScreen from "@/screens/auth/OAuth2RedirectScreen";
+import ViewProductScreen from "../screens/product/ViewProductScreen";
+import {ProductResponse} from "@/types";
+import ProductDetailsScreen from "@/screens/product/ProductDetailsScreen";
+
 
 // import Splash from "../screens/auth/Splash";
 
@@ -56,7 +57,7 @@ export type RootStackParamList = {
   mywishlist: undefined;
   dashboard: undefined;
   addproduct: undefined;
-  viewproduct: undefined;
+  viewproduct: ProductResponse;
   editproduct: undefined;
   tab: UserResponse;
   cart: { user: UserResponse };
@@ -97,7 +98,8 @@ const Routes: React.FC = () => {
         {/* <Stack.Screen name="mywishlist" component={MyWishlistScreen} /> */}
         {/* <Stack.Screen name="dashboard" component={DashboardScreen} /> */}
         {/* <Stack.Screen name="addproduct" component={AddProductScreen} /> */}
-        {/* <Stack.Screen name="viewproduct" component={ViewProductScreen} /> */}
+         <Stack.Screen name="viewproduct" component={ViewProductScreen} />
+        <Stack.Screen name="productdetail" component={ProductDetailsScreen} />
         {/* <Stack.Screen name="editproduct" component={EditProductScreen} /> */}
         <Stack.Screen name="tab" component={Tabs} />
          <Stack.Screen name="cart" component={CartScreen} />

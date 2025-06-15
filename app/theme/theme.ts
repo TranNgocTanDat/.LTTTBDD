@@ -33,6 +33,7 @@ export const SPACING: Spacing = {
 };
 
 interface Color {
+    primaryGreenHex: string;
     primaryRedHex: string;
     primaryOrangeHex: string;
     primaryBlackHex: string;
@@ -48,6 +49,7 @@ interface Color {
 }
 
 export const COLORS: Color = {
+    primaryGreenHex: '#008000',
     primaryRedHex: '#DC3535',
     primaryOrangeHex: '#D17842',
     primaryBlackHex: '#0C0F14',
