@@ -29,11 +29,15 @@ const PaymentFooter: React.FC<PaymentFooterProps> = ({
             <View style={styles.PriceContainer}>
                 <Text style={styles.PriceTitle}>Tổng cộng</Text>
                 <Text style={styles.PriceText}>
-                    {parseFloat(price.price).toLocaleString('vi-VN', {
+                    {parseFloat(price.price.replace(/\./g,
+                        '').replace(/đ/g, '').trim()).toLocaleString('vi-VN', {
                         maximumFractionDigits: 0,
                     })}
                     <Text style={styles.CurrencyText}> {price.currency}</Text>
                 </Text>
+
+
+
 
             </View>
             <TouchableOpacity

@@ -1,5 +1,4 @@
 import React from 'react';
-
 import {
     StyleSheet,
     Text,
@@ -9,7 +8,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-
+import { Ionicons } from '@expo/vector-icons';
 import {
     BORDERRADIUS,
     COLORS,
@@ -17,7 +16,6 @@ import {
     FONTSIZE,
     SPACING,
 } from '../../theme/theme';
-import { Ionicons } from '@expo/vector-icons';
 
 interface CartItemProps {
     id: string;
@@ -36,6 +34,11 @@ interface CartItemProps {
     decrementCartItemQuantityHandler: (id: string, size: string) => void;
     removeFromCartHandler: (id: string, size: string) => void;
 }
+
+const formatPrice = (price: number) => {
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+};
+
 
 const CartItem: React.FC<CartItemProps> = ({
                                                id,
@@ -69,28 +72,26 @@ const CartItem: React.FC<CartItemProps> = ({
                             </View>
                         </View>
                     </View>
+
                     {prices.map((data, index) => (
-                        <View
-                            key={index.toString()}
-                            style={styles.CartItemSizeRowContainer}>
+                        <View key={index.toString()} style={styles.CartItemSizeRowContainer}>
                             <View style={styles.CartItemSizeValueContainer}>
                                 <View style={styles.SizeBox}>
-                                    <Text
-                                        style={[
-                                            styles.SizeText,
-                                            {
-                                                fontSize:
-                                                    type === 'Bean' ? FONTSIZE.size_12 : FONTSIZE.size_16,
-                                            },
-                                        ]}>
+                                    <Text style={[
+                                        styles.SizeText,
+                                        {
+                                            fontSize: type === 'Bean' ? FONTSIZE.size_10 : FONTSIZE.size_10,
+                                        }
+                                    ]}>
                                         {data.size}
                                     </Text>
                                 </View>
                                 <Text style={styles.SizeCurrency}>
                                     {data.currency}
-                                    <Text style={styles.SizePrice}> {data.price}</Text>
+                                    <Text style={styles.SizePrice}> {formatPrice(data.price)}</Text>
                                 </Text>
                             </View>
+
                             <View style={styles.CartItemSizeValueContainer}>
                                 <TouchableOpacity
                                     style={styles.CartItemIcon}
@@ -118,11 +119,9 @@ const CartItem: React.FC<CartItemProps> = ({
                 <LinearGradient
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
-                    colors={["#c5c5c5","#404040",]}
+                    colors={['#c5c5c5', '#5c5c5c']}
                     style={styles.CartItemSingleLinearGradient}>
-                    <View>
-                        <Image source={image} style={styles.CartItemSingleImage} />
-                    </View>
+                    <Image source={image} style={styles.CartItemSingleImage} />
                     <View style={styles.CartItemSingleInfoContainer}>
                         <View>
                             <Text style={styles.CartItemTitle}>{name}</Text>
@@ -130,47 +129,39 @@ const CartItem: React.FC<CartItemProps> = ({
                         </View>
                         <View style={styles.CartItemSingleSizeValueContainer}>
                             <View style={styles.SizeBox}>
-                                <Text
-                                    style={[
-                                        styles.SizeText,
-                                        {
-                                            fontSize:
-                                                type === 'Bean' ? FONTSIZE.size_12 : FONTSIZE.size_16,
-                                        },
-                                    ]}>
+                                <Text style={[
+                                    styles.SizeText,
+                                    {
+                                        fontSize: type === 'Bean' ? FONTSIZE.size_10 : FONTSIZE.size_16,
+                                    }
+                                ]}>
                                     {prices[0].size}
                                 </Text>
                             </View>
                             <Text style={styles.SizeCurrency}>
                                 {prices[0].currency}
-                                <Text style={styles.SizePrice}> {prices[0].price}</Text>
+                                <Text style={styles.SizePrice}> {formatPrice(prices[0].price)}</Text>
                             </Text>
+
                         </View>
+
                         <View style={styles.CartItemSingleQuantityContainer}>
                             <TouchableOpacity
                                 style={styles.CartItemIcon}
-                                onPress={() =>
-                                    decrementCartItemQuantityHandler(id, prices[0].size)
-                                }>
+                                onPress={() => decrementCartItemQuantityHandler(id, prices[0].size)}>
                                 <Ionicons name="remove" size={FONTSIZE.size_16} color={COLORS.primaryWhiteHex} />
                             </TouchableOpacity>
                             <View style={styles.CartItemQuantityContainer}>
-                                <Text style={styles.CartItemQuantityText}>
-                                    {prices[0].quantity}
-                                </Text>
+                                <Text style={styles.CartItemQuantityText}>{prices[0].quantity}</Text>
                             </View>
                             <TouchableOpacity
                                 style={styles.CartItemIcon}
-                                onPress={() =>
-                                    incrementCartItemQuantityHandler(id, prices[0].size)
-                                }>
+                                onPress={() => incrementCartItemQuantityHandler(id, prices[0].size)}>
                                 <Ionicons name="add" size={FONTSIZE.size_16} color={COLORS.primaryWhiteHex} />
                             </TouchableOpacity>
                             <TouchableOpacity
                                 style={styles.CartItemIcon}
-                                onPress={() =>
-                                    removeFromCartHandler(id, prices[0].size)
-                                }>
+                                onPress={() => removeFromCartHandler(id, prices[0].size)}>
                                 <Ionicons name="trash-bin" size={18} color={COLORS.primaryWhiteHex} />
                             </TouchableOpacity>
                         </View>
@@ -180,9 +171,6 @@ const CartItem: React.FC<CartItemProps> = ({
         </View>
     );
 };
-
-
-
 
 const styles = StyleSheet.create({
     CartItemLinearGradient: {
@@ -218,7 +206,7 @@ const styles = StyleSheet.create({
     },
     CartItemRoastedContainer: {
         height: 50,
-        width: 50 * 2 + SPACING.space_20,
+        width: 120,
         borderRadius: BORDERRADIUS.radius_15,
         justifyContent: 'center',
         alignItems: 'center',
@@ -227,7 +215,7 @@ const styles = StyleSheet.create({
     CartItemRoastedText: {
         fontFamily: FONTFAMILY.poppins_regular,
         fontSize: FONTSIZE.size_10,
-        color: "#000000",
+        color: "#ffffff",
     },
     CartItemSizeRowContainer: {
         flex: 1,
@@ -241,19 +229,20 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flexDirection: 'row',
         justifyContent: 'space-between',
-
     },
     SizeBox: {
         backgroundColor: COLORS.primaryBlackHex,
-        height: 40,
-        width: 130,
+        height: 30,
+        width: 90,
         borderRadius: BORDERRADIUS.radius_10,
         justifyContent: 'center',
         alignItems: 'center',
+        margin: 10,
     },
     SizeText: {
         fontFamily: FONTFAMILY.poppins_medium,
         color: COLORS.secondaryLightGreyHex,
+
     },
     SizeCurrency: {
         fontFamily: FONTFAMILY.poppins_semibold,
@@ -265,9 +254,8 @@ const styles = StyleSheet.create({
     },
     CartItemIcon: {
         backgroundColor: COLORS.primaryOrangeHex,
-         padding: SPACING.space_8,
+        padding: SPACING.space_8,
         borderRadius: BORDERRADIUS.radius_10,
-
     },
     CartItemQuantityContainer: {
         backgroundColor: COLORS.primaryBlackHex,
