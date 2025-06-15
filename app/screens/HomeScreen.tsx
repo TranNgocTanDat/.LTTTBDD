@@ -32,6 +32,8 @@ import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { UserResponse } from "@/model/User";
 import { Dropdown } from "react-native-element-dropdown";
 import Carousel from "react-native-reanimated-carousel";
+import categoryApi from "@/services/categoryApi";
+import {Category} from "@/model/Category";
 
 type TabParamList = {
   home: { user: UserResponse };
@@ -92,6 +94,9 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
   );
   const carouselRef = useRef<ScrollView>(null);
   const [carouselIndex, setCarouselIndex] = useState(0);
+
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [categoryError, setCategoryError] = useState("");
 
   const { mutate: addToCart } = useMutation({
     mutationFn: cartApi.addToCart,
@@ -171,6 +176,27 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
     }
   }, [searchQuery, products]);
 
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await categoryApi.getCategories();
+
+        if (!Array.isArray(data)) {
+          throw new Error("Invalid category data format");
+        }
+
+        setCategories(data);
+        setCategoryError("");
+      } catch (error) {
+        console.error("Category API Error:", error);
+        setCategoryError("Failed to load categories");
+        setCategories([]); // optional: clear old data on failure
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
   const searchItems = [
     { id: "1", name: "PlayStation 5" },
     { id: "2", name: "Xbox Series X" },
@@ -245,7 +271,7 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
           </View>
 
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.cartIconContainer}>
+            <TouchableOpacity style={styles.cartIconContainer} onPress={() => navigation.getParent()?.navigate("viewproduct")}>
               {cartItems.length > 0 && (
                 <View style={styles.cartItemCountContainer}>
                   <Text style={styles.cartItemCountText}>
@@ -289,25 +315,25 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
           </View>
           <View style={styles.categoryContainer}>
             <FlatList
-              showsHorizontalScrollIndicator={false}
-              style={styles.flatListContainer}
-              horizontal={true}
-              data={category}
-              keyExtractor={(item) => item.productId}
-              renderItem={({ item, index }) => (
-                <View style={{ marginBottom: 10 }} key={item.productId}>
-                  <CustomIconButton
-                    key={item.productId}
-                    text={item.title}
-                    image={item.image}
-                    onPress={function (): void {
-                      throw new Error("Function not implemented.");
-                    }} // onPress={() =>
-                    //   navigation.jumpTo("categories", { categoryID: item })
-                    // }
-                  />
-                </View>
-              )}
+                showsHorizontalScrollIndicator={false}
+                style={styles.flatListContainer}
+                horizontal
+                data={categories}
+                keyExtractor={(item) => item.cate_ID.toString()}
+                renderItem={({ item }) => (
+                    <View style={{ marginBottom: 10 }} key={item.cate_ID.toString()}>
+                      <CustomIconButton
+                          text={item.name}
+                          image={{ uri: item.urlImage }}
+                          onPress={() =>
+                              navigation.navigate("viewproduct", {
+                                categoryId: item.cate_ID, // truyền ID của danh mục vào ViewProduct
+                                categoryName: item.name,
+                              })
+                          }
+                      />
+                    </View>
+                )}
             />
             <View style={styles.emptyView}></View>
           </View>
