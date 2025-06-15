@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
     View,
     Text,
@@ -7,67 +7,73 @@ import {
     FlatList,
     Alert,
     StatusBar,
+    SafeAreaView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, SPACING } from '../../theme/theme';
 import { useNavigation } from '@react-navigation/native';
-
-interface Notification {
-    id: string;
-    title: string;
-    message: string;
-    timestamp: string;
-}
+import { COLORS, SPACING } from '../../theme/theme';
+import { useStore } from '../../store/store';
 
 const NotificationScreen = () => {
-    const navigation = useNavigation();
-
-    const [notifications, setNotifications] = useState<Notification[]>([
-        {
-            id: '1',
-            title: 'Đơn hàng đã được xác nhận',
-            message: 'Cảm ơn bạn đã đặt hàng. Đơn hàng của bạn đang được xử lý.',
-            timestamp: '10 phút trước',
-        },
-        {
-            id: '2',
-            title: 'Mã khuyến mãi mới',
-            message: 'Nhập mã SALE10 để được giảm giá 10% đơn hàng.',
-            timestamp: '1 giờ trước',
-        },
-        {
-            id: '3',
-            title: 'Thông báo hệ thống',
-            message: 'Hệ thống sẽ bảo trì vào 00:00 hôm nay.',
-            timestamp: 'Hôm qua',
-        },
-    ]);
-
+    const navigation = useNavigation<any>();
+    const NotificationList = useStore((state) => state.NotificationList);
+    const clearAllNotifications = useStore((state) => state.clearAllNotifications);
+    const markNotificationAsRead = useStore((state) => state.markNotificationAsRead);
     const handleClearAll = () => {
+        if (NotificationList.length === 0) return;
         Alert.alert('Xác nhận', 'Bạn có chắc chắn muốn xóa tất cả thông báo?', [
             { text: 'Hủy', style: 'cancel' },
             {
                 text: 'Xóa',
                 style: 'destructive',
-                onPress: () => setNotifications([]),
+                onPress: () => clearAllNotifications(),
             },
         ]);
     };
 
-    const renderItem = ({ item }: { item: Notification }) => (
-        <View style={styles.notificationItem}>
+    const formatTime = (isoString: string | undefined | null) => {
+        if (!isoString) return 'Không rõ thời gian';
+
+        const date = new Date(isoString);
+        if (isNaN(date.getTime())) return 'Không rõ thời gian';
+
+        return date.toLocaleString('vi-VN', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+        });
+    };
+
+
+
+    const renderItem = ({ item }: { item: typeof NotificationList[0] }) => (
+        <TouchableOpacity
+            style={[
+                styles.notificationItem,
+                item.read && { backgroundColor: COLORS.primaryGreyHex + '20' },
+            ]}
+            onPress={() => {
+                if (!item.read) markNotificationAsRead(item.id);
+            }}
+        >
             <View style={{ flex: 1 }}>
                 <Text style={styles.notificationTitle}>{item.title}</Text>
                 <Text style={styles.notificationMessage}>{item.message}</Text>
-                <Text style={styles.notificationTime}>{item.timestamp}</Text>
+                <Text style={styles.notificationTime}>{formatTime(item.date)}</Text>
+                <Text style={[styles.readStatus, { color: item.read ? 'green' : 'red' }]}>
+                    {item.read ? 'Đã đọc' : 'Chưa đọc'}
+                </Text>
             </View>
-        </View>
+        </TouchableOpacity>
     );
 
-    return (
-        <View style={styles.container}>
-            <StatusBar backgroundColor={COLORS.primaryBlackHex} barStyle="light-content" />
 
+
+    return (
+        <SafeAreaView style={styles.container}>
+            <StatusBar backgroundColor={COLORS.primaryOrangeHex} barStyle="light-content" />
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Ionicons name="arrow-back" size={28} color="#fff" />
@@ -78,19 +84,19 @@ const NotificationScreen = () => {
                 </TouchableOpacity>
             </View>
 
-            {notifications.length === 0 ? (
+            {NotificationList.length === 0 ? (
                 <View style={styles.emptyContainer}>
                     <Text style={styles.emptyText}>Không có thông báo nào.</Text>
                 </View>
             ) : (
                 <FlatList
-                    data={notifications}
+                    data={NotificationList}
                     keyExtractor={(item) => item.id}
                     renderItem={renderItem}
                     contentContainerStyle={{ paddingBottom: 40 }}
                 />
             )}
-        </View>
+        </SafeAreaView>
     );
 };
 
@@ -99,8 +105,7 @@ export default NotificationScreen;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#ffffff",
-        paddingTop: 60,
+        backgroundColor: COLORS.primaryWhiteHex,
     },
     header: {
         flexDirection: 'row',
@@ -125,11 +130,11 @@ const styles = StyleSheet.create({
         marginVertical: 8,
         padding: 16,
         borderRadius: 10,
-        elevation: 2,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
+        elevation: 2,
     },
     notificationTitle: {
         fontSize: 16,
@@ -156,4 +161,14 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: COLORS.primaryGreyHex,
     },
+    notificationItemRead: {
+        backgroundColor: COLORS.primaryGreyHex + '20',
+    },
+    readStatus: {
+        fontSize: 12,
+        marginTop: 4,
+        fontWeight: 'bold',
+    },
+
+
 });
