@@ -37,7 +37,10 @@ const CheckoutScreen = () => {
     const CartList = useStore((state: any) => state.CartList);
     const addNotification = useStore((state: any) => state.addNotification);
 
-    const total = parseFloat(amount);
+    const total = parseFloat(amount.replace(/\./g, '').replace(/đ/g, '').trim());
+    console.log('Amount raw:', amount);
+    console.log('Amount parsed:', total);
+
     const discountedTotal = (total * (100 - discount)) / 100;
 
     const applyPromoCode = () => {
@@ -175,7 +178,8 @@ const CheckoutScreen = () => {
             <View style={styles.totalContainer}>
                 <Text style={styles.totalText}>Tổng cộng:</Text>
                 <Text style={styles.totalAmount}>
-                    {discountedTotal.toLocaleString('vi-VN', { maximumFractionDigits: 0 })}đ
+                    {discountedTotal.toLocaleString('vi-VN')}đ
+
                 </Text>
             </View>
 
