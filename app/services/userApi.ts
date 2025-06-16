@@ -9,19 +9,16 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 export default {
-  // getUsers: () => api.get<APIResponse<UserResponse[]>>("/users"),
-  // addUser: (user: UserCreationRequest) => api.post<UserResponse>("/users", user),
-  // updateUser: (id: string, user: UserUpdateRequest) => api.put<UserResponse>(`/users/${id}`, user),
 
   getUsers: async (): Promise<UserResponse[]> => {
-    const token = localStorage.getItem("token");
+    // Đảm bảo đồng nhất cách lấy token!
+    const token = await AsyncStorage.getItem("authUser");
     const response = await api.get<APIResponse<UserResponse[]>>("/users", {
       headers: {
-        Authorization: `Bearer ${token}`,  
+        Authorization: `Bearer ${token}`,
       },
       withCredentials: true,
     });
-    console.log(response);
     return response.result; // Trả về mảng người dùng từ `result`
   },
 
