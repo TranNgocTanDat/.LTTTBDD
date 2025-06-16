@@ -70,18 +70,24 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
     onSuccess: (data) => {
       dispatch(addCartItem(data));
       queryClient.invalidateQueries({ queryKey: ["cart"] });
+      console.log("Add to cart success", data);
     },
     onError: (err) => {
       console.error("Add to cart failed", err);
     },
   });
 
-  const { data: products } = useQuery({
+  const { data: productsPopular } = useQuery({
     queryKey: ["products", { limit: 2, offset: 0 }],
     queryFn: () => productApi.getProducts(4, 0),
     refetchOnWindowFocus: false,
   });
 
+  const { data: productsFava } = useQuery({
+    queryKey: ["products", { limit: 2, offset: 15 }],
+    queryFn: () => productApi.getProducts(4, 10),
+    refetchOnWindowFocus: false,
+  });
   const convertToJSON = (obj: string | any) => {
     try {
       setUserInfo(JSON.parse(obj));
@@ -90,16 +96,16 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
     }
   };
 
-  const handleProductPress = (productId: number) => {
+  const handleProductPress = (productId: number ) => {
     navigation.getParent()?.navigate("productdetail", { productId })
   };
 
-  const handleAddToCart = (productId: number) => {
+  const handleAddToCart = (productId: number, price:number) => {
     if (!authenticated) {
       alert("Please log in to add items to your cart.");
       return;
     }
-    addToCart({ productId });
+    addToCart({ productId, quantity: 1, size: "M", currency: "VND", price });
   };
 
   const handleOnRefresh = () => {
@@ -260,9 +266,9 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
           </View>
 
           <View style={styles.primaryTextContainer}>
-            <Text style={styles.primaryText}>New Arrivals</Text>
+            <Text style={styles.primaryText}>Popular Items</Text>
           </View>
-          {(products ?? []).length === 0 ? (
+          {(productsPopular ?? []).length === 0 ? (
             <View style={styles.productCardContainerEmpty}>
               <Text style={styles.productCardContainerEmptyText}>
                 No Product
@@ -280,7 +286,7 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
                 showsHorizontalScrollIndicator={false}
                 initialNumToRender={5}
                 horizontal={true}
-                data={(products ?? []).slice(0, 4)}
+                data={(productsPopular ?? []).slice(0, 4)}
                 keyExtractor={(item) => item.productId.toString()}
                 renderItem={({ item }) => (
                   <View
@@ -288,12 +294,9 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
                     style={{ marginLeft: 5, marginBottom: 10, marginRight: 5 }}
                   >
                     <ProductCard
-                      name={item.productName}
-                      image={item.img}
-                      price={item.price}
-                      quantity={item.stock}
+                     product={item}
                       onPress={() => handleProductPress(item.productId)}
-                      onPressSecondary={() => handleAddToCart(item.productId)}               />
+                      onPressSecondary={() => handleAddToCart(item.productId, item.price)}               />
                   </View>
                 )}
               />
@@ -302,9 +305,9 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
           )}
 
           <View style={styles.primaryTextContainer}>
-            <Text style={styles.primaryText}>New Arrivals</Text>
+            <Text style={styles.primaryText}>Favorites</Text>
           </View>
-          {(products ?? []).length === 0 ? (
+          {(productsFava ?? []).length === 0 ? (
             <View style={styles.productCardContainerEmpty}>
               <Text style={styles.productCardContainerEmptyText}>
                 No Product
@@ -322,7 +325,7 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
                 showsHorizontalScrollIndicator={false}
                 initialNumToRender={5}
                 horizontal={true}
-                data={(products ?? []).slice(0, 4)}
+                data={(productsFava ?? []).slice(0, 4)}
                 keyExtractor={(item) => item.productId.toString()}
                 renderItem={({ item }) => (
                   <View
@@ -330,12 +333,9 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
                     style={{ marginLeft: 5, marginBottom: 10, marginRight: 5 }}
                   >
                     <ProductCard
-                      name={item.productName}
-                      image={item.img}
-                      price={item.price}
-                      quantity={item.stock}
+                      product={item}
                       onPress={() => handleProductPress(item.productId)}
-                      onPressSecondary={() => handleAddToCart(item.productId)}
+                      onPressSecondary={() => handleAddToCart(item.productId, item.price)}
                     />
                   </View>
                 )}
