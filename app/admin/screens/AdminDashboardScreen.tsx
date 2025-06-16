@@ -15,11 +15,11 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '@/routes/Routers';
 
-
+import CustomerTab  from "@/admin/components/CustomerTab";
 
 const tabs = [
     { label: "Tổng quan", key: "overview", icon: "bar-chart" },
-    { label: "Hải sản", key: "seafood", icon: "fish-outline" },
+    { label: "Sản phẩm", key: "seafood", icon: "fish-outline" },
     { label: "Đơn hàng", key: "orders", icon: "cube-outline" },
     { label: "Khách hàng", key: "customers", icon: "people-outline" },
 ];
@@ -139,8 +139,20 @@ const AdminDashboardScreen = () => {
     };
 
     const handleSave = async () => {
-        if (!form.productName || !form.price || !form.cate_ID) {
-            Alert.alert("Thiếu thông tin", "Điền đầy đủ các trường");
+        if (!form.productName.trim()) {
+            Alert.alert("Thiếu thông tin", "Vui lòng nhập tên sản phẩm!");
+            return;
+        }
+        if (!form.price.trim() || isNaN(Number(form.price)) || Number(form.price) <= 0) {
+            Alert.alert("Thiếu thông tin", "Giá sản phẩm phải là số lớn hơn 0!");
+            return;
+        }
+        if (!form.stock.trim() || isNaN(Number(form.stock)) || Number(form.stock) < 0) {
+            Alert.alert("Thiếu thông tin", "Tồn kho phải là số, không nhỏ hơn 0!");
+            return;
+        }
+        if (!form.cate_ID || !categories.some(c => c.cate_ID === form.cate_ID)) {
+            Alert.alert("Thiếu thông tin", "Vui lòng chọn danh mục hợp lệ!");
             return;
         }
 
@@ -313,13 +325,12 @@ const AdminDashboardScreen = () => {
                             style={styles.input}
                         />
                         <TextInput
-                            placeholder="Link ảnh"
-                            value={form.img ?? ""}
+                            placeholder="Giá"
+                            value={form.price ?? ""}
                             placeholderTextColor="#888"
-                            onChangeText={text => setForm(f => ({ ...f, img: text }))}
+                            onChangeText={text => setForm(f => ({ ...f, price: text }))}
                             style={styles.input}
                         />
-
                         <TextInput
                             placeholder="Tồn kho"
                             value={form.stock}
@@ -433,23 +444,13 @@ const AdminDashboardScreen = () => {
                 );
             case "customers":
                 return (
-                    <>
-                        <View style={styles.rowCenter}>
-                            <Text style={styles.pageTitle}>👥 Danh sách khách hàng</Text>
-                        </View>
-                        {customers.map((item) => (
-                            <View key={item.id} style={styles.itemRow}>
-                                <Text style={styles.customerName}>{item.name}</Text>
-                                <Text style={styles.customerType}>{item.type}</Text>
-                            </View>
-                        ))}
-                    </>
+                    <CustomerTab/>
                 );
             default:
                 return null;
         }
-    };
 
+};
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: "#f9fafb" }}>
             {/* Nút menu nổi ở trên cùng bên trái, nằm trong SafeArea */}
@@ -464,9 +465,8 @@ const AdminDashboardScreen = () => {
             {renderMenuModal()}
         </SafeAreaView>
     );
-};
+}
 
-export default AdminDashboardScreen;
 
 
 const styles = StyleSheet.create({
@@ -685,3 +685,4 @@ const styles = StyleSheet.create({
     },
 });
 
+export default AdminDashboardScreen;

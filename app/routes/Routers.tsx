@@ -111,7 +111,6 @@ const Routes: React.FC = () => {
          <Stack.Screen name="cart" component={CartScreen} />
          <Stack.Screen name="checkout" component={CheckoutScreen} />
         {/* <Stack.Screen name="orderconfirm" component={OrderConfirmScreen} /> */}
-        <Stack.Screen name="productdetail" component={ProductDetailScreen} />
         {/* <Stack.Screen name="vieworder" component={ViewOrdersScreen} /> */}
         {/* <Stack.Screen name="vieworderdetails" component={ViewOrderDetailScreen} /> */}
         {/* <Stack.Screen name="myorder" component={MyOrderScreen} /> */}
