@@ -20,7 +20,7 @@ import { loginSuccess } from "@/redux/authSlice";
 import { RootStackParamList } from "@/routes/Routers";
 import * as Animatable from "react-native-animatable";
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList, "tab" | "dashboard">;
+type NavigationProp = NativeStackNavigationProp<RootStackParamList, "tab" | "admindashboard">;
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");

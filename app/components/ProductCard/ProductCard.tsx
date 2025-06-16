@@ -8,13 +8,10 @@ import {
   GestureResponderEvent,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { ProductResponse } from "../../model/Product";
+import { Product } from "../../model/Product";
 
 interface ProductCardProps {
-  name: string;
-  price: number;
-  image: string;
-  quantity: number;
+  product: Product;
   onPress: (event: GestureResponderEvent) => void;
   onPressSecondary: (event: GestureResponderEvent) => void;
 }
@@ -24,22 +21,21 @@ const truncate = (str: string, maxLength: number) => {
   return str?.length > maxLength ? str.substring(0, maxLength) + "..." : str;
 };
 
+
+
 const ProductCard: React.FC<ProductCardProps> = ({
 
-  name,
-  price,
-  image,
-  quantity,
+  product,
   onPress,
   onPressSecondary,
 }) => {
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
       <View style={styles.imageWrapper}>
-        <Image source={{ uri: image }} style={styles.image} />
+        <Image source={{ uri: product.img }} style={styles.image} />
       </View>
 
-      <Text style={styles.name}>{name}</Text>
+      <Text style={styles.name}>{product.productName}</Text>
 
       <View style={styles.rating}>
         {[...Array(4)].map((_, i) => (
@@ -50,13 +46,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
       <View style={styles.details}>
         <Text style={styles.weight}>500g</Text>
-        <Text style={styles.price}>${price}</Text>
+        <Text style={styles.price}>${product.price}</Text>
       </View>
 
       <TouchableOpacity
         style={styles.addButton}
         onPress={onPressSecondary}
-        disabled={quantity === 0}
+        disabled={product.stock === 0}
       >
         <Ionicons name="add" size={14} color="#fff" />
       </TouchableOpacity>
@@ -95,9 +91,9 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   image: {
-    width: 55,
-    height: 55,
-    resizeMode: "cover",
+    width: 100,
+    height: 100,
+    resizeMode: "contain",
   },
   name: {
     color: "#333",

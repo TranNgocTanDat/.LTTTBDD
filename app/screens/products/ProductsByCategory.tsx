@@ -74,10 +74,7 @@ const CategoryProductsScreen = () => {
             keyExtractor={(item) => item.productId.toString()}
             renderItem={({ item }) => (
               <ProductCard
-                name={item.productName}
-                image={item.img}
-                price={item.price}
-                quantity={item.stock}
+               product={item}
                 onPress={() => navigation.navigate("productdetail", { productId: item.productId })}
                 onPressSecondary={() => {}}
               />

@@ -3,7 +3,7 @@ import axios, { AxiosResponse, AxiosRequestConfig } from "axios";
 
 
 
-const DOMAIN = "http://192.168.1.10:8080/api";
+const DOMAIN = "http://192.168.1.199:8080/api";
 
 
 
