@@ -39,8 +39,11 @@ const cartSlice = createSlice({
       state.cart = null;
     },
     setCartItems: (state, action: PayloadAction<CartResponse>) => {
-      state.cart = action.payload;
-    },
+      state.cart = {
+        ...action.payload,
+        cartItems: [...action.payload.cartItems], // clone mảng để đảm bảo re-render
+      };
+    }
   },
 });
 

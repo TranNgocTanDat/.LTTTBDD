@@ -12,47 +12,52 @@ import {
   FlatList,
 } from "react-native";
 import { RouteProp, useRoute, useNavigation } from "@react-navigation/native";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { RootStackParamList } from "@/routes/Routers";
 import productApi from "@/services/productApi";
 import { useStore } from "../../store/store";
 import { COLORS, SPACING } from "@/theme/theme";
 import { Ionicons } from "@expo/vector-icons";
+import cartApi from "@/services/cartApi";
+import { addCartItem } from "@/redux/cartSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 type ProductDetailRouteProp = RouteProp<RootStackParamList, "productdetail">;
 
 const ProductDetailScreen = () => {
   const { productId } = useRoute<ProductDetailRouteProp>().params;
   const navigation = useNavigation();
-  const addToCart = useStore((state: any) => state.addToCart);
+  const queryClient = useQueryClient();
+  const dispatch = useDispatch();
+  const { authenticated } = useSelector((state: RootState) => state.auth);
 
   const { data: product, isLoading } = useQuery({
     queryKey: ["product-detail", productId],
     queryFn: () => productApi.getProductById(productId),
   });
 
-  const handleAddToCart = () => {
-    if (!product) return;
-    const newItem = {
-      id: product.productId.toString(),
-      name: product.productName,
-      prices: [
-        {
-          size: "M",
-          price: product.price.toString(),
-          quantity: 1,
-        },
-      ],
-      image: { uri: product.img },
-      special_ingredient: product.description,
-      roasted: product.categoryName,
-      type: product.categoryName,
-      index: Math.floor(Math.random() * 1000),
-    };
+  const { mutate: addToCart } = useMutation({
+    mutationFn: cartApi.addToCart,
+    onSuccess: (data) => {
+      dispatch(addCartItem(data));
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+      console.log("Add to cart success", data);
+    },
+    onError: (err) => {
+      console.error("Add to cart failed", err);
+    },
+  });
 
-    addToCart(newItem);
+  const handleAddToCart = (productId: number) => {
+    if (!authenticated) {
+      alert("Please log in to add items to your cart.");
+      return;
+    }
+    addToCart({ productId, quantity: 1, size: "M", currency: "VND", price: 9999 }); // Assuming size is "M" for simplicity
     Alert.alert("Thành công", "Đã thêm vào giỏ hàng!");
   };
+
 
   const [comments, setComments] = useState<string[]>([
     "Sản phẩm rất tốt!",
@@ -109,7 +114,7 @@ const ProductDetailScreen = () => {
 
               <TouchableOpacity
                 style={styles.button}
-                onPress={handleAddToCart}
+                onPress={() => handleAddToCart(product.productId)} 
                 disabled={product.stock <= 0}
               >
                 <Text style={styles.buttonText}>Thêm vào giỏ hàng</Text>

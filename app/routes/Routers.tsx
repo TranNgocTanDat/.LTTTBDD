@@ -32,6 +32,9 @@ import AdminDashboardScreen from "@/admin/screens/AdminDashboardScreen";
 import OAuth2RedirectScreen from "@/screens/auth/OAuth2RedirectScreen";
 import CategoryProductsScreen from "@/screens/products/ProductsByCategory";
 import ProductDetailScreen from "@/screens/products/ProductDetail";
+import { CartResponse } from "@/model/Cart";
+import CheckoutSuccessScreen from "@/screens/user/CheckoutSucessScreen";
+import { OrderResponse } from "@/model/Order";
 // import OrderConfirmScreen from "../screens/user/OrderConfirmScreen";
 // import ProductDetailScreen from "../screens/user/ProductDetailScreen";
 // import EditProductScreen from "../screens/admin/EditProductScreen";
@@ -62,7 +65,7 @@ export type RootStackParamList = {
   editproduct: undefined;
   tab: UserResponse;
   cart: { user: UserResponse };
-  checkout: undefined;
+  checkout: {order: OrderResponse};
   orderconfirm: undefined;
   productdetail: { productId: number  };
   vieworder: undefined;
@@ -78,7 +81,7 @@ export type RootStackParamList = {
   viewusers: undefined;
   categories: undefined;
   notification: undefined;
-  
+  success: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -116,6 +119,7 @@ const Routes: React.FC = () => {
         {/* <Stack.Screen name="editcategories" component={EditCategoryScreen} /> */}
         {/* <Stack.Screen name="viewusers" component={ViewUsersScreen} /> */}
          <Stack.Screen name="notification" component={NotificationScreen} />
+         <Stack.Screen name="success" component={CheckoutSuccessScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
