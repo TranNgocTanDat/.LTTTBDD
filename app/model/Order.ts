@@ -5,6 +5,7 @@ export interface OrderItem {
     productName: string;  // Tên sản phẩm
     totalPrice: number;
     img: string   // Giá tại thời điểm mua
+    price: number;       // Giá sản phẩm tại thời điểm mua
 }
 
 // Model chính cho đơn hàng
