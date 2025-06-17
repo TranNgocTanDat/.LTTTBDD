@@ -38,7 +38,7 @@ const CheckoutScreen = () => {
   const route = useRoute<CheckoutRouteProp>();
   const { order } = route.params;
 
-  console.log("CheckoutScreen cart:", order.id);
+  console.log("CheckoutScreen cart:", order);
 
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
@@ -113,12 +113,12 @@ const CheckoutScreen = () => {
   };
 
   const renderProduct = ({ item }: any) => {
-    const totalPerItem = item.totalPrice || item.price * item.quantity;
+    const totalPerItem = item.totalPrice || item.price * item.quantity || 0;
     return (
       <View style={styles.cartItem}>
         <View>
           <Text style={styles.cartItemText}>
-            {item.product?.productName || "Không rõ tên sản phẩm"}
+            {item.productName || "Không rõ tên sản phẩm"}
           </Text>
           <Text
             style={[
@@ -126,7 +126,7 @@ const CheckoutScreen = () => {
               { fontSize: 14, color: COLORS.primaryGreyHex },
             ]}
           >
-            {item.quantity} x {parseFloat(item.price).toLocaleString("vi-VN")}đ
+            {item.quantity ?? 1} x {parseFloat(item.price || 0).toLocaleString("vi-VN")}đ
           </Text>
         </View>
         <Text style={[styles.cartItemText, { fontWeight: "600" }]}>
@@ -135,6 +135,7 @@ const CheckoutScreen = () => {
       </View>
     );
   };
+  
 
   return (
     <ScrollView
