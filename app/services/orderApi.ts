@@ -2,6 +2,7 @@
 import type { APIResponse } from "@/model/APIResponse";
 import type { OrderResponse, PaymentMethodResponse } from "@/model/Order";
 import api from "./api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const orderApi = {
   /**
@@ -20,12 +21,7 @@ const orderApi = {
     }
   },
 
-  /**
-   * Chọn phương thức thanh toán cho đơn hàng.
-   * @param orderId ID đơn hàng
-   * @param paymentMethod phương thức thanh toán (string, ví dụ: "COD", "MOMO")
-   * @returns PaymentMethodResponse
-   */
+
   choosePaymentMethod: async (
     orderId: number,
     paymentMethod: string
@@ -66,39 +62,25 @@ const orderApi = {
    * @returns Danh sách OrderResponse[]
    */
   getAllOrders: async (): Promise<OrderResponse[]> => {
-    const token = localStorage.getItem("token");
-    try {
-      const response = await api.get<APIResponse<OrderResponse[]>>("/orders", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        withCredentials: true,
-      });
-      console.log(response);
-      return response.result;
-    } catch (error) {
-      console.error("Error fetching orders:", error);
-      throw error;
-    }
+    const token = await AsyncStorage.getItem("authUser");
+    const response = await api.get<APIResponse<OrderResponse[]>>("/orders", {
+      headers: { Authorization: `Bearer ${token}` },
+      withCredentials: true,
+    });
+    return response.result;
   },
+
+
   getOrderByUser: async (): Promise<OrderResponse[]> => {
-    const token = localStorage.getItem("token");
-    try {
-      const response = await api.get<APIResponse<OrderResponse[]>>(
+    const token = await AsyncStorage.getItem("authUser");
+    const response = await api.get<APIResponse<OrderResponse[]>>(
         "/orders/me",
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
           withCredentials: true,
         }
-      );
-      console.log(response);
-      return response.result;
-    } catch (error) {
-      console.error("Error fetching orders by user:", error);
-      throw error;
-    }
+    );
+    return response.result;
   },
 };
 

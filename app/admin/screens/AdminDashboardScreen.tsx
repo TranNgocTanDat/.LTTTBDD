@@ -14,7 +14,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '@/routes/Routers';
-
+import orderApi from "@/services/orderApi";
+import type { OrderResponse } from "@/model/Order";
 import CustomerTab  from "@/admin/components/CustomerTab";
 
 const tabs = [
@@ -64,6 +65,30 @@ const AdminDashboardScreen = () => {
         img: "",
         cate_ID: 0,
     });
+
+    const [orders, setOrders] = useState<OrderResponse[]>([]);
+    const [orderLoading, setOrderLoading] = useState(false);
+    useEffect(() => {
+        if (selectedTab === "orders") {
+            setOrderLoading(true);
+            orderApi.getAllOrders()
+                .then(data => setOrders(data))
+                .catch(() => setOrders([]))
+                .finally(() => setOrderLoading(false));
+        }
+    }, [selectedTab]);
+
+    const fetchOrders = async () => {
+        setOrderLoading(true);
+        try {
+            const data = await orderApi.getAllOrders();
+            setOrders(data);
+        } catch {
+            Alert.alert("Lỗi", "Không lấy được danh sách đơn hàng");
+        } finally {
+            setOrderLoading(false);
+        }
+    };
     const handleLogout = async () => {
         // Xóa token/session nếu có
         await AsyncStorage.removeItem("access_token"); // hoặc key bạn lưu token
@@ -392,7 +417,6 @@ const AdminDashboardScreen = () => {
             </Modal>
         </View>
     );
-
     // Nội dung các tab còn lại
     const renderContent = () => {
         switch (selectedTab) {
@@ -424,22 +448,40 @@ const AdminDashboardScreen = () => {
                         <View style={styles.rowCenter}>
                             <Text style={styles.pageTitle}>📦 Quản lý đơn hàng</Text>
                         </View>
-                        {orders.map((item) => {
-                            const statusStyle = getStatusStyle(item.status);
-                            return (
-                                <View key={item.id} style={styles.itemRow}>
-                                    <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
-                                        <Text style={styles.orderId}>#{item.id}</Text>
-                                        <Text style={[styles.status, { color: statusStyle.color, backgroundColor: statusStyle.backgroundColor }]}>
-                                            {item.status}
-                                        </Text>
-                                    </View>
-                                    <Text style={styles.amount}>
-                                        {item.amount.toLocaleString("vi-VN")}đ
-                                    </Text>
-                                </View>
-                            );
-                        })}
+                        {orderLoading ? <ActivityIndicator style={{ marginTop: 20 }} /> : (
+                            <FlatList
+                                data={orders}
+                                keyExtractor={item => item.id.toString()}
+                                renderItem={({ item }) => {
+                                    const statusStyle = getStatusStyle(item.status);
+                                    return (
+                                        <Pressable
+                                            style={styles.itemRow}
+                                            onPress={() => {
+                                                // Nếu muốn hiện chi tiết, show modal hoặc chuyển trang
+                                                Alert.alert(
+                                                    `Chi tiết đơn #${item.id}`,
+                                                    `Khách: ${item.username}\nTổng tiền: ${item.totalPrice?.toLocaleString("vi-VN")}đ\nTrạng thái: ${item.status}\nSản phẩm: ${item.orderItems.map(oi=>oi.productName).join(", ")}`,
+                                                    [{ text: "OK" }]
+                                                );
+                                            }}
+                                        >
+                                            <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
+                                                <Text style={styles.orderId}>#{item.id}</Text>
+                                                <Text style={[styles.status, { color: statusStyle.color, backgroundColor: statusStyle.backgroundColor }]}>
+                                                    {item.status}
+                                                </Text>
+                                            </View>
+                                            <Text style={styles.amount}>
+                                                {item.totalPrice?.toLocaleString("vi-VN")}đ
+                                            </Text>
+                                        </Pressable>
+                                    );
+                                }}
+                                ListEmptyComponent={<Text style={{ textAlign: "center", marginTop: 26 }}>Không có đơn hàng nào</Text>}
+                                contentContainerStyle={{ paddingBottom: 18 }}
+                            />
+                        )}
                     </>
                 );
             case "customers":
